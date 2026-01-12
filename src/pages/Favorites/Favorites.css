@@ -1,0 +1,317 @@
+.favorites-page {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #FFFBF5 0%, #FEF8F0 50%, #FFFBF5 100%);
+  min-height: 100vh;
+  padding: 100px 0 60px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Заголовок */
+.favorites-header {
+  text-align: center;
+  margin-bottom: 50px;
+  position: relative;
+}
+
+.favorites-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #2D5016;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #2D5016, #4A7C2A);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.favorites-header p {
+  font-size: 1.2rem;
+  color: #6B5B7D;
+  margin-bottom: 20px;
+}
+
+.clear-favorites-btn {
+  background: rgba(231, 76, 60, 0.1);
+  color: #E74C3C;
+  border: 2px solid #E74C3C;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.clear-favorites-btn:hover {
+  background: #E74C3C;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Сетка избранного */
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+.favorite-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.favorite-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.favorite-image {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+}
+
+.favorite-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.favorite-card:hover .favorite-image img {
+  transform: scale(1.05);
+}
+
+.remove-favorite-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.remove-favorite-btn:hover {
+  background: #E74C3C;
+  transform: scale(1.1);
+}
+
+.remove-favorite-btn svg {
+  width: 20px;
+  height: 20px;
+  color: #E74C3C;
+  transition: color 0.3s ease;
+}
+
+.remove-favorite-btn:hover svg {
+  color: white;
+}
+
+.favorite-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #6B5B7D;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  backdrop-filter: blur(10px);
+}
+
+.favorite-info {
+  padding: 25px;
+}
+
+.favorite-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2D5016;
+  margin-bottom: 8px;
+}
+
+.favorite-description {
+  color: #6B5B7D;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.favorite-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.favorite-price {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #2D5016;
+}
+
+.favorite-add-to-cart {
+  background: linear-gradient(135deg, #8BC9A1, #7AB890);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.favorite-add-to-cart:hover {
+  background: linear-gradient(135deg, #7AB890, #6AA780);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 201, 161, 0.4);
+}
+
+/* Пустое избранное */
+.empty-favorites {
+  text-align: center;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.empty-favorites-icon {
+  font-size: 5rem;
+  margin-bottom: 30px;
+  opacity: 0.7;
+}
+
+.empty-favorites h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2D5016;
+  margin-bottom: 15px;
+}
+
+.empty-favorites p {
+  font-size: 1.2rem;
+  color: #6B5B7D;
+  margin-bottom: 30px;
+}
+
+.cta-button {
+  padding: 16px 32px;
+  background: linear-gradient(135deg, #8BC9A1, #7AB890);
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.cta-button:hover {
+  background: linear-gradient(135deg, #7AB890, #6AA780);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139, 201, 161, 0.4);
+}
+
+/* Действия */
+.favorites-actions {
+  text-align: center;
+  padding-top: 30px;
+  border-top: 2px solid rgba(139, 201, 161, 0.2);
+}
+
+.back-to-catalog {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #8BC9A1, #7AB890);
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.back-to-catalog:hover {
+  background: linear-gradient(135deg, #7AB890, #6AA780);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(139, 201, 161, 0.3);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .favorites-page {
+    padding: 80px 0 40px;
+  }
+  
+  .favorites-header h1 {
+    font-size: 2.2rem;
+  }
+  
+  .favorites-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  
+  .favorite-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+  
+  .favorite-add-to-cart {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 15px;
+  }
+  
+  .favorites-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .favorites-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .empty-favorites {
+    padding: 60px 15px;
+  }
+  
+  .empty-favorites h1 {
+    font-size: 2rem;
+  }
+}

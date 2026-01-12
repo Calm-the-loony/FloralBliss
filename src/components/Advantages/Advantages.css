@@ -1,0 +1,249 @@
+.advantages {
+  background: #FFFFFF;
+  padding: 100px 24px;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+}
+
+.advantages::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #8BC9A1, transparent);
+}
+
+.advantages__container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.advantages__header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.advantages__title {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #2D5016;
+  position: relative;
+}
+
+.advantages__title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: #C7A7E7;
+  border-radius: 2px;
+}
+
+.advantages__subtitle {
+  font-size: 1.2rem;
+  color: #6B5B7D;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+.advantages__list {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.advantage__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+  padding: 30px;
+  position: relative;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+}
+
+.advantage__item:hover {
+  background: rgba(139, 201, 161, 0.03);
+}
+
+.advantage__item::before {
+  content: '';
+  position: absolute;
+  left: 55px;
+  top: 80px;
+  bottom: -50px;
+  width: 2px;
+  background: linear-gradient(to bottom, #8BC9A1, rgba(139, 201, 161, 0.2));
+  z-index: 1;
+}
+
+.advantage__item:last-child::before {
+  display: none;
+}
+
+.advantage__number {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #8BC9A1, #7AB890);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 4px 15px rgba(139, 201, 161, 0.3);
+  transition: all 0.3s ease;
+}
+
+.advantage__item:hover .advantage__number {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(139, 201, 161, 0.4);
+}
+
+.advantage__number::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(135deg, #8BC9A1, #C7A7E7);
+  border-radius: 50%;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.advantage__item:hover .advantage__number::before {
+  opacity: 0.3;
+}
+
+.advantage__content {
+  flex: 1;
+  padding-top: 8px;
+}
+
+.advantage__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #2D5016;
+  position: relative;
+}
+
+.advantage__title::before {
+  content: '';
+  position: absolute;
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: #C7A7E7;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.advantage__item:hover .advantage__title::before {
+  opacity: 1;
+}
+
+.advantage__description {
+  font-size: 1.1rem;
+  color: #6B5B7D;
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 300;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .advantages {
+    padding: 80px 20px;
+  }
+  
+  .advantages__title {
+    font-size: 2.2rem;
+  }
+  
+  .advantages__subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .advantages__list {
+    gap: 40px;
+  }
+  
+  .advantage__item {
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .advantage__item::before {
+    left: 35px;
+    top: 70px;
+  }
+  
+  .advantage__number {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+  
+  .advantage__title {
+    font-size: 1.3rem;
+  }
+  
+  .advantage__description {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .advantages {
+    padding: 60px 16px;
+  }
+  
+  .advantages__header {
+    margin-bottom: 60px;
+  }
+  
+  .advantages__title {
+    font-size: 1.8rem;
+  }
+  
+  .advantages__subtitle {
+    font-size: 1rem;
+  }
+  
+  .advantage__item {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+    padding: 25px 20px;
+  }
+  
+  .advantage__item::before {
+    display: none;
+  }
+  
+  .advantage__number {
+    align-self: center;
+  }
+  
+  .advantage__title::before {
+    display: none;
+  }
+}
