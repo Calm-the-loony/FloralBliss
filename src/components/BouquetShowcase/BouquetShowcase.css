@@ -759,3 +759,126 @@
     height: 16px;
   }
 }
+/* Пагинация */
+.pagination-container {
+  margin-top: 48px;
+  padding: 24px 0;
+  text-align: center;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #7A7A7A;
+  margin-bottom: 16px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pagination-arrow {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #E8E4DC;
+  background: white;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #4A4A4A;
+}
+
+.pagination-arrow:hover:not(:disabled) {
+  background: #8BC9A1;
+  border-color: #8BC9A1;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.pagination-arrow:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+.pagination-number {
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #E8E4DC;
+  background: white;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4A4A4A;
+  padding: 0 8px;
+}
+
+.pagination-number:hover {
+  background: #F5ECD7;
+  border-color: #8BC9A1;
+  transform: translateY(-2px);
+}
+
+.pagination-number.active {
+  background: #8BC9A1;
+  border-color: #8BC9A1;
+  color: white;
+}
+
+.pagination-dots {
+  color: #B0B0B0;
+  font-size: 14px;
+  padding: 0 4px;
+}
+
+/* Адаптив для пагинации */
+@media (max-width: 768px) {
+  .pagination-container {
+    margin-top: 32px;
+    padding: 16px 0;
+  }
+  
+  .pagination-arrow,
+  .pagination-number {
+    width: 36px;
+    height: 36px;
+    font-size: 13px;
+  }
+  
+  .pagination-arrow svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pagination {
+    gap: 6px;
+  }
+  
+  .pagination-arrow,
+  .pagination-number {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+  
+  .pagination-info {
+    font-size: 12px;
+  }
+}

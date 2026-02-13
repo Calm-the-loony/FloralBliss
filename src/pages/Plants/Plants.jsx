@@ -3,26 +3,15 @@ import { Link } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard/ProductCard';
 import './Plants.css';
 
-const categories = [
-  { id: 'all', name: 'Все растения', dbField: null },
-  { id: 'large', name: 'Крупные растения', dbField: 'large' },
-  { id: 'medium', name: 'Средние растения', dbField: 'medium' },
-  { id: 'small', name: 'Маленькие растения', dbField: 'small' },
-  { id: 'flowering', name: 'Цветущие', dbField: 'flowering' },
-  { id: 'succulents', name: 'Суккуленты', dbField: 'succulents' },
-  { id: 'easycare', name: 'Неприхотливые', dbField: 'easycare' }
-];
-
 const priceRanges = [
   { id: 'all', name: 'Любая цена', min: 0, max: Infinity },
   { id: 'budget', name: 'До 1 500 ₽', min: 0, max: 1500 },
-  { id: 'medium', name: '1 500 - 2 500 ₽', min: 1500, max: 2500 },
-  { id: 'premium', name: 'От 2 500 ₽', min: 2500, max: Infinity }
+  { id: 'medium', name: '1 500 - 3 000 ₽', min: 1500, max: 3000 },
+  { id: 'premium', name: 'От 3 000 ₽', min: 3000, max: Infinity }
 ];
 
 const careLevels = [
   { id: 'all', name: 'Любой уход' },
-  { id: 'very-easy', name: 'Очень легкий' },
   { id: 'easy', name: 'Легкий' },
   { id: 'medium', name: 'Средний' },
   { id: 'hard', name: 'Сложный' }
@@ -30,11 +19,15 @@ const careLevels = [
 
 const sortOptions = [
   { id: 'default', name: 'По умолчанию' },
-  { id: 'price-asc', name: 'По цене ↑' },
-  { id: 'price-desc', name: 'По цене ↓' },
+  { id: 'price-asc', name: 'Сначала дешевле' },
+  { id: 'price-desc', name: 'Сначала дороже' },
   { id: 'name', name: 'По названию' },
   { id: 'height', name: 'По высоте' }
 ];
+
+// Настройки пагинации
+const ITEMS_PER_PAGE = 12;
+const PAGINATION_VISIBLE_PAGES = 5;
 
 export default function Plants() {
   const [products, setProducts] = useState([]);
@@ -42,15 +35,22 @@ export default function Plants() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedPrice, setSelectedPrice] = useState('all');
   const [selectedCare, setSelectedCare] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('default');
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
+  
+  // Состояния для пагинации
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(ITEMS_PER_PAGE);
 
-  // Дебаунс для поиска
+  // Сброс на первую страницу при изменении фильтров
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedPrice, selectedCare, searchQuery, sortBy]);
+
   const handleSearchChange = useCallback((value) => {
     setSearchQuery(value);
     setIsSearching(true);
@@ -66,7 +66,6 @@ export default function Plants() {
     setSearchTimeout(timeout);
   }, [searchTimeout]);
 
-  // Очистка поиска
   const handleClearSearch = useCallback(() => {
     setSearchQuery('');
     setIsSearching(false);
@@ -108,6 +107,34 @@ export default function Plants() {
     fetchPlants();
   }, []);
 
+  // Функция для парсинга тегов
+  const parseTags = (tags) => {
+    if (!tags) return [];
+    try {
+      if (Array.isArray(tags)) return tags;
+      if (typeof tags === 'string') {
+        const parsed = JSON.parse(tags);
+        return Array.isArray(parsed) ? parsed : [];
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  };
+
+  // Определение сложности ухода из care_instructions
+  const getCareLevel = (careInstructions) => {
+    if (!careInstructions) return 'medium';
+    const text = careInstructions.toLowerCase();
+    if (text.includes('редкий') || text.includes('1 раз в 2 недели') || text.includes('неприхотлив')) {
+      return 'easy';
+    }
+    if (text.includes('капризн') || text.includes('сложн') || text.includes('требовател')) {
+      return 'hard';
+    }
+    return 'medium';
+  };
+
   // Фильтрация и сортировка
   useEffect(() => {
     if (!products.length) {
@@ -116,27 +143,6 @@ export default function Plants() {
     }
 
     let filtered = [...products];
-
-    // Фильтрация по категории
-    if (selectedCategory !== 'all') {
-      const selectedCat = categories.find(cat => cat.id === selectedCategory);
-      if (selectedCat && selectedCat.dbField) {
-        filtered = filtered.filter(plant => {
-          const categorySlug = plant.category?.slug;
-          const categoryName = plant.category?.name?.toLowerCase();
-          const plantType = plant.type;
-          const tags = plant.tags || [];
-          
-          return (
-            categorySlug === selectedCat.id ||
-            categoryName === selectedCat.dbField ||
-            plantType === selectedCat.dbField ||
-            tags.some(tag => tag.toLowerCase().includes(selectedCat.dbField)) ||
-            (selectedCat.dbField === 'succulents' && (plant.name?.toLowerCase().includes('суккулент') || categoryName?.includes('суккулент')))
-          );
-        });
-      }
-    }
 
     // Фильтрация по цене
     if (selectedPrice !== 'all') {
@@ -151,31 +157,20 @@ export default function Plants() {
     // Фильтрация по сложности ухода
     if (selectedCare !== 'all') {
       filtered = filtered.filter(plant => {
-        const care = plant.care_level?.toLowerCase() || '';
-        switch (selectedCare) {
-          case 'very-easy':
-            return care.includes('очень легкий') || care.includes('легчайший');
-          case 'easy':
-            return care.includes('легкий') && !care.includes('очень легкий');
-          case 'medium':
-            return care.includes('средний');
-          case 'hard':
-            return care.includes('сложный');
-          default:
-            return true;
-        }
+        const careLevel = getCareLevel(plant.care_instructions);
+        return careLevel === selectedCare;
       });
     }
 
     // Поиск по названию, описанию и тегам
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(plant => 
-        plant.name?.toLowerCase().includes(query) ||
-        plant.description?.toLowerCase().includes(query) ||
-        plant.category?.name?.toLowerCase().includes(query) ||
-        (plant.tags && plant.tags.some(tag => tag.toLowerCase().includes(query)))
-      );
+      filtered = filtered.filter(plant => {
+        const tags = parseTags(plant.tags);
+        return plant.name?.toLowerCase().includes(query) ||
+               plant.description?.toLowerCase().includes(query) ||
+               tags.some(tag => tag.toLowerCase().includes(query));
+      });
     }
 
     // Сортировка
@@ -198,23 +193,67 @@ export default function Plants() {
         filtered.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
         break;
       case 'height':
-        filtered.sort((a, b) => {
-          const heightA = parseInt(a.height?.split('-')[0]) || 0;
-          const heightB = parseInt(b.height?.split('-')[0]) || 0;
-          return heightA - heightB;
-        });
+        filtered.sort((a, b) => (a.height_cm || 0) - (b.height_cm || 0));
         break;
       default:
-
         filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         break;
     }
 
     setFilteredProducts(filtered);
-  }, [products, selectedCategory, selectedPrice, selectedCare, searchQuery, sortBy]);
+  }, [products, selectedPrice, selectedCare, searchQuery, sortBy]);
+
+  // Пагинация - получаем текущие товары
+  const currentProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredProducts.slice(startIndex, endIndex);
+  }, [filteredProducts, currentPage, itemsPerPage]);
+
+  // Пагинация - общее количество страниц
+  const totalPages = useMemo(() => {
+    return Math.ceil(filteredProducts.length / itemsPerPage);
+  }, [filteredProducts, itemsPerPage]);
+
+  // Функция для переключения страницы
+  const goToPage = useCallback((page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    // Прокрутка к верху страницы
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [totalPages]);
+
+  // Функция для перехода на следующую страницу
+  const goToNextPage = useCallback(() => {
+    if (currentPage < totalPages) {
+      goToPage(currentPage + 1);
+    }
+  }, [currentPage, totalPages, goToPage]);
+
+  // Функция для перехода на предыдущую страницу
+  const goToPrevPage = useCallback(() => {
+    if (currentPage > 1) {
+      goToPage(currentPage - 1);
+    }
+  }, [currentPage, goToPage]);
+
+  // Получение массива номеров страниц для отображения
+  const getPageNumbers = useMemo(() => {
+    const pages = [];
+    let startPage = Math.max(1, currentPage - Math.floor(PAGINATION_VISIBLE_PAGES / 2));
+    let endPage = Math.min(totalPages, startPage + PAGINATION_VISIBLE_PAGES - 1);
+    
+    if (endPage - startPage + 1 < PAGINATION_VISIBLE_PAGES) {
+      startPage = Math.max(1, endPage - PAGINATION_VISIBLE_PAGES + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }, [currentPage, totalPages]);
 
   const clearFilters = useCallback(() => {
-    setSelectedCategory('all');
     setSelectedPrice('all');
     setSelectedCare('all');
     setSearchQuery('');
@@ -227,13 +266,7 @@ export default function Plants() {
 
   const handleQuickView = (plant) => {
     console.log('Быстрый просмотр растения:', plant);
-    const message = `Быстрый просмотр: ${plant.name}
-Цена: ${plant.price} ₽
-${plant.care_level ? `Уход: ${plant.care_level}` : ''}
-${plant.height ? `Высота: ${plant.height}` : ''}
-${plant.light ? `Освещение: ${plant.light}` : ''}`;
-    
-    alert(message);
+    alert(`Быстрый просмотр: ${plant.name}\nЦена: ${plant.price} ₽`);
   };
 
   const getDisplayedProductsCount = () => {
@@ -244,12 +277,18 @@ ${plant.light ? `Освещение: ${plant.light}` : ''}`;
 
   const getActiveFiltersCount = () => {
     return [
-      selectedCategory !== 'all',
       selectedPrice !== 'all',
       selectedCare !== 'all',
       !!searchQuery,
       sortBy !== 'default'
     ].filter(Boolean).length;
+  };
+
+  // Отображение диапазона товаров на текущей странице
+  const getItemsRange = () => {
+    const start = (currentPage - 1) * itemsPerPage + 1;
+    const end = Math.min(currentPage * itemsPerPage, filteredProducts.length);
+    return `${start}-${end} из ${filteredProducts.length}`;
   };
 
   return (
@@ -281,7 +320,7 @@ ${plant.light ? `Освещение: ${plant.light}` : ''}`;
                 placeholder="Поиск растений по названию или описанию..."
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="search-input-wide"
+                className="search-input"
                 aria-label="Поиск растений"
               />
               {searchQuery && (
@@ -304,42 +343,7 @@ ${plant.light ? `Освещение: ${plant.light}` : ''}`;
 
         <section className="bouquets-filters">
           <div className="filters-grid">
-            {/* Категории */}
-            <div className="filter-group">
-              <label className="filter-label">Категория</label>
-              <div className="category-filters">
-                {categories.map(category => (
-                  <button
-                    key={category.id}
-                    className={`category-filter ${selectedCategory === category.id ? 'active' : ''}`}
-                    onClick={() => setSelectedCategory(category.id)}
-                    aria-pressed={selectedCategory === category.id}
-                  >
-                    <span className="category-name">{category.name}</span>
-                    <span className="category-dot"></span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Цена, уход и сортировка */}
             <div className="filter-row">
-              <div className="filter-group">
-                <label className="filter-label">Сложность ухода</label>
-                <div className="sort-options">
-                  {careLevels.map(level => (
-                    <button
-                      key={level.id}
-                      className={`sort-option ${selectedCare === level.id ? 'active' : ''}`}
-                      onClick={() => setSelectedCare(level.id)}
-                      aria-pressed={selectedCare === level.id}
-                    >
-                      {level.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               <div className="filter-group price-group">
                 <label className="filter-label">Ценовой диапазон</label>
                 <div className="price-options">
@@ -351,6 +355,22 @@ ${plant.light ? `Освещение: ${plant.light}` : ''}`;
                       aria-pressed={selectedPrice === range.id}
                     >
                       {range.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="filter-group">
+                <label className="filter-label">Сложность ухода</label>
+                <div className="sort-options">
+                  {careLevels.map(level => (
+                    <button
+                      key={level.id}
+                      className={`sort-option ${selectedCare === level.id ? 'active' : ''}`}
+                      onClick={() => setSelectedCare(level.id)}
+                      aria-pressed={selectedCare === level.id}
+                    >
+                      {level.name}
                     </button>
                   ))}
                 </div>
@@ -383,7 +403,6 @@ ${plant.light ? `Освещение: ${plant.light}` : ''}`;
             </div>
           </div>
 
-          {/* Результаты фильтрации */}
           <div className="filter-results">
             <div className="results-info">
               <p className="results-count">
@@ -409,7 +428,6 @@ ${plant.light ? `Освещение: ${plant.light}` : ''}`;
           </div>
         </section>
 
-        {/* Сетка товаров */}
         <section className="bouquets-grid-section">
           {loading ? (
             <div className="loading-container">
@@ -441,19 +459,92 @@ ${plant.light ? `Освещение: ${plant.light}` : ''}`;
               </button>
             </div>
           ) : (
-            <div className="products-grid">
-              {filteredProducts.map((plant, index) => (
-                <ProductCard
-                  key={plant.id}
-                  product={plant}
-                  index={index}
-                  onQuickView={handleQuickView}
-                />
-              ))}
-            </div>
+            <>
+              <div className="products-grid">
+                {currentProducts.map((plant, index) => (
+                  <ProductCard
+                    key={plant.id}
+                    product={plant}
+                    index={index}
+                    onQuickView={handleQuickView}
+                  />
+                ))}
+              </div>
+
+              {/* Пагинация */}
+              {totalPages > 1 && (
+                <div className="pagination-container">
+                  <div className="pagination-info">
+                    Показано {getItemsRange()}
+                  </div>
+                  <div className="pagination">
+                    <button
+                      className="pagination-arrow"
+                      onClick={goToPrevPage}
+                      disabled={currentPage === 1}
+                      aria-label="Предыдущая страница"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+
+                    {getPageNumbers[0] > 1 && (
+                      <>
+                        <button
+                          className="pagination-number"
+                          onClick={() => goToPage(1)}
+                        >
+                          1
+                        </button>
+                        {getPageNumbers[0] > 2 && (
+                          <span className="pagination-dots">...</span>
+                        )}
+                      </>
+                    )}
+
+                    {getPageNumbers.map(page => (
+                      <button
+                        key={page}
+                        className={`pagination-number ${currentPage === page ? 'active' : ''}`}
+                        onClick={() => goToPage(page)}
+                        aria-label={`Страница ${page}`}
+                        aria-current={currentPage === page ? 'page' : undefined}
+                      >
+                        {page}
+                      </button>
+                    ))}
+
+                    {getPageNumbers[getPageNumbers.length - 1] < totalPages && (
+                      <>
+                        {getPageNumbers[getPageNumbers.length - 1] < totalPages - 1 && (
+                          <span className="pagination-dots">...</span>
+                        )}
+                        <button
+                          className="pagination-number"
+                          onClick={() => goToPage(totalPages)}
+                        >
+                          {totalPages}
+                        </button>
+                      </>
+                    )}
+
+                    <button
+                      className="pagination-arrow"
+                      onClick={goToNextPage}
+                      disabled={currentPage === totalPages}
+                      aria-label="Следующая страница"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </section>
-
       </div>
     </div>
   );

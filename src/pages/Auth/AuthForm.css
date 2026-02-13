@@ -59,11 +59,8 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: 20px;
-  padding: 40px 45px;
-  box-shadow: 
-    0 15px 40px rgba(0, 0, 0, 0.08),
-    0 6px 20px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  padding: 35px 40px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.6);
   width: 100%;
   max-width: 460px;
@@ -73,7 +70,7 @@
 
 .auth-header {
   text-align: center;
-  margin-bottom: 35px;
+  margin-bottom: 28px;
 }
 
 .auth-logo {
@@ -81,10 +78,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 20px;
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #2D5016;
+  margin-bottom: 15px;
 }
 
 .auth-logo svg {
@@ -92,56 +86,94 @@
   height: 28px;
 }
 
-.auth-header h1 {
+.auth-logo span {
   font-family: 'Playfair Display', serif;
-  font-size: 1.9rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: #2D5016;
-  margin-bottom: 10px;
-  background: linear-gradient(135deg, #2D5016, #4A7C2A);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+}
+
+.auth-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #2D5016;
+  margin-bottom: 8px;
 }
 
 .auth-header p {
   color: #6B5B7D;
-  font-size: 1rem;
+  font-size: 0.9rem;
   line-height: 1.4;
 }
 
 .auth-form {
   display: flex;
   flex-direction: column;
+  gap: 14px;
+}
+
+/* Стили для полей имени и фамилии */
+.name-row {
+  display: flex;
   gap: 16px;
+  width: 100%;
 }
 
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
+.name-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
 }
 
+.name-field input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid #E8E6E1;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+  font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
+}
+
+.name-field input:focus {
+  outline: none;
+  border-color: #8BC9A1;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(139, 201, 161, 0.1);
+}
+
+.name-field input.error {
+  border-color: #E74C3C;
+}
+
+.name-field input::placeholder {
+  color: #B8B0C0;
+  font-weight: 400;
+}
+
+/* Стандартные поля */
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-}
-
-.form-group label {
-  font-weight: 600;
-  color: #2D5016;
-  font-size: 0.9rem;
+  gap: 4px;
+  width: 100%;
 }
 
 .form-group input {
   padding: 12px 14px;
   border: 2px solid #E8E6E1;
   border-radius: 10px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.8);
   width: 100%;
+  font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
 }
 
 .form-group input:focus {
@@ -153,27 +185,32 @@
 
 .form-group input.error {
   border-color: #E74C3C;
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.form-group input::placeholder {
+  color: #B8B0C0;
+  font-weight: 400;
 }
 
 .error-text {
   color: #E74C3C;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 500;
+  margin-top: 2px;
 }
 
 .error-message {
   background: rgba(231, 76, 60, 0.1);
   color: #E74C3C;
-  padding: 10px 14px;
-  border-radius: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
   text-align: center;
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .checkbox-group {
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .checkbox-label {
@@ -181,7 +218,7 @@
   align-items: flex-start;
   gap: 10px;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #6B5B7D;
   line-height: 1.4;
   text-align: left;
@@ -192,13 +229,14 @@
 }
 
 .checkmark {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border: 2px solid #E8E6E1;
   border-radius: 4px;
   position: relative;
   flex-shrink: 0;
   transition: all 0.3s ease;
+  background: white;
   margin-top: 1px;
 }
 
@@ -211,7 +249,7 @@
   content: '✓';
   position: absolute;
   color: white;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: bold;
   top: 50%;
   left: 50%;
@@ -223,15 +261,13 @@
   line-height: 1.3;
 }
 
-.checkbox-label a {
+.checkbox-text a {
   color: #8BC9A1;
   text-decoration: none;
   font-weight: 600;
-  display: inline;
-  white-space: nowrap;
 }
 
-.checkbox-label a:hover {
+.checkbox-text a:hover {
   text-decoration: underline;
 }
 
@@ -239,15 +275,16 @@
   background: linear-gradient(135deg, #8BC9A1, #7AB890);
   color: white;
   border: none;
-  padding: 14px;
-  border-radius: 10px;
-  font-size: 1rem;
+  padding: 12px;
+  border-radius: 30px;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 8px;
-  position: relative;
-  overflow: hidden;
+  margin-top: 6px;
+  font-family: 'Inter', sans-serif;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .auth-submit-btn:hover:not(:disabled) {
@@ -259,7 +296,6 @@
 .auth-submit-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
-  transform: none;
 }
 
 .loading-spinner {
@@ -277,71 +313,13 @@
   100% { transform: rotate(360deg); }
 }
 
-.auth-divider {
-  text-align: center;
-  position: relative;
-  margin: 18px 0;
-  color: #8B7A99;
-  font-size: 0.85rem;
-}
-
-.auth-divider::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: #E8E6E1;
-}
-
-.auth-divider span {
-  background: white;
-  padding: 0 12px;
-  position: relative;
-}
-
-.social-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 18px;
-}
-
-.social-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px;
-  border: 2px solid #E8E6E1;
-  border-radius: 10px;
-  background: white;
-  color: #2D5016;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-}
-
-.social-btn:hover {
-  border-color: #8BC9A1;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-}
-
-.google-btn:hover {
-  border-color: #4285F4;
-}
-
-.yandex-btn:hover {
-  border-color: #FC3F1D;
-}
-
 .auth-switch {
   text-align: center;
   color: #6B5B7D;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  padding-top: 10px;
+  margin-top: 4px;
+  border-top: 1px solid #E8E6E1;
 }
 
 .auth-switch a {
@@ -354,28 +332,21 @@
   text-decoration: underline;
 }
 
+/* Адаптив */
 @media (max-width: 768px) {
   .auth-card {
-    padding: 35px 30px;
+    padding: 30px 30px;
     margin: 20px;
     max-width: 400px;
   }
 
   .auth-header h1 {
-    font-size: 1.7rem;
+    font-size: 1.5rem;
   }
 
-  .form-row {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .social-buttons {
-    grid-template-columns: 1fr;
-  }
-
-  .checkbox-label {
-    font-size: 0.82rem;
+  .name-row {
+    flex-direction: column;
+    gap: 14px;
   }
 }
 
@@ -385,38 +356,30 @@
   }
 
   .auth-card {
-    padding: 30px 25px;
+    padding: 25px 20px;
     max-width: 100%;
     margin: 10px;
   }
 
   .auth-header h1 {
-    font-size: 1.5rem;
-  }
-
-  .form-row {
-    gap: 10px;
-  }
-
-  .checkbox-label {
-    font-size: 0.8rem;
-    line-height: 1.3;
+    font-size: 1.3rem;
   }
   
   .auth-header {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
   }
-}
-
-.checkbox-label {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-}
-
-.checkbox-label br {
-  display: none;
-}
-
-.checkbox-text {
-  word-break: keep-all;
+  
+  .auth-header p {
+    font-size: 0.8rem;
+  }
+  
+  .name-row {
+    gap: 12px;
+  }
+  
+  .name-field input,
+  .form-group input {
+    padding: 11px 12px;
+    font-size: 0.9rem;
+  }
 }

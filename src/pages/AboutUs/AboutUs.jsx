@@ -27,13 +27,6 @@ export default function AboutUs() {
     }
   ];
 
-  const stats = [
-    { number: "5+", label: "Лет на рынке" },
-    { number: "2 500+", label: "Довольных клиентов" },
-    { number: "15 000+", label: "Созданных букетов" },
-    { number: "98%", label: "Положительных отзывов" }
-  ];
-
   const values = [
     {
       icon: (
@@ -138,20 +131,6 @@ export default function AboutUs() {
         </div>
       </section>
 
-      <section className="about-stats">
-        <div className="container">
-          <h2>Floral Bliss в цифрах</h2>
-          <div className="stats-grid">
-            {stats.map((stat, index) => (
-              <div key={index} className="stat-card">
-                <div className="stat-number">{stat.number}</div>
-                <div className="stat-label">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="about-values">
         <div className="container">
           <h2>Наши ценности</h2>
@@ -199,7 +178,7 @@ export default function AboutUs() {
             </p>
             <div className="about-cta-buttons">
               <Link to="/bouquets" className="about-cta-button primary">Смотреть каталог</Link>
-              <Link to="/custom" className="about-cta-button secondary">Заказать дизайн</Link>
+              <Link to="/custom-bouquet" className="about-cta-button secondary">Заказать дизайн</Link>
             </div>
           </div>
         </div>

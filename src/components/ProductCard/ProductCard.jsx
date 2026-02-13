@@ -4,7 +4,7 @@ import { useCart } from '../../context/CartContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import './ProductCard.css';
 
-const ProductCard = ({ product, onQuickView }) => {
+const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();
   
@@ -65,33 +65,32 @@ const ProductCard = ({ product, onQuickView }) => {
         const firstImage = getFirstImage();
         
         if (!firstImage) {
-          setImageUrl(`https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=600&fit=crop&auto=format&text=${encodeURIComponent(name)}`);
+          setImageUrl(`https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=600&fit=crop&auto=format`);
           setImageLoaded(true);
           setLoading(false);
           return;
         }
 
-        console.log('🖼️ Загрузка изображения для:', name, firstImage);
-        
         if (firstImage.includes('unsplash.com')) {
           setImageUrl(firstImage);
+          setImageLoaded(true);
+          setLoading(false);
           return;
         }
         
         if (firstImage.startsWith('http')) {
           const testImage = new Image();
-          testImage.crossOrigin = 'anonymous';
           
           testImage.onload = () => {
-            console.log('✅ Прямое подключение удалось:', firstImage);
             setImageUrl(firstImage);
             setImageLoaded(true);
             setLoading(false);
           };
           
           testImage.onerror = () => {
-            console.log('🔄 Прямое подключение не удалось, используем прокси:', firstImage);
-            setImageUrl(`http://localhost:5000/api/images/proxy?url=${encodeURIComponent(firstImage)}`);
+            setImageUrl(`https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=600&fit=crop&auto=format`);
+            setImageError(true);
+            setLoading(false);
           };
           
           testImage.src = firstImage;
@@ -100,16 +99,19 @@ const ProductCard = ({ product, onQuickView }) => {
         
         if (firstImage.startsWith('/')) {
           setImageUrl(firstImage);
+          setImageLoaded(true);
+          setLoading(false);
           return;
         }
         
-        setImageUrl(`https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=600&fit=crop&auto=format&text=${encodeURIComponent(name)}`);
+        setImageUrl(`https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=600&fit=crop&auto=format`);
+        setImageLoaded(true);
+        setLoading(false);
         
       } catch (error) {
         console.error('Ошибка загрузки изображения:', error);
-        setImageUrl(`https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=600&fit=crop&auto=format&text=${encodeURIComponent(name)}`);
+        setImageUrl(`https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=600&fit=crop&auto=format`);
         setImageError(true);
-      } finally {
         setLoading(false);
       }
     };
@@ -118,13 +120,11 @@ const ProductCard = ({ product, onQuickView }) => {
   }, [product, images, name]);
 
   const handleImageError = (e) => {
-    console.error('❌ Ошибка в img теге:', imageUrl);
     setImageError(true);
-    e.target.src = `https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=600&fit=crop&auto=format&text=${encodeURIComponent(name)}`;
+    e.target.src = `https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=600&fit=crop&auto=format`;
   };
 
   const handleImageLoad = () => {
-    console.log('✅ Изображение загружено:', imageUrl);
     setImageLoaded(true);
     setImageError(false);
   };
@@ -171,12 +171,6 @@ const ProductCard = ({ product, onQuickView }) => {
     setTimeout(() => heartBtn.classList.remove('heart-animate'), 600);
   };
 
-  const handleQuickView = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onQuickView?.(product);
-  };
-
   const formatPrice = (priceValue) => {
     const normalized = normalizePrice(priceValue);
     return new Intl.NumberFormat('ru-RU').format(normalized) + ' ₽';
@@ -202,7 +196,6 @@ const ProductCard = ({ product, onQuickView }) => {
               onLoad={handleImageLoad}
               onError={handleImageError}
               className={`product-image ${imageLoaded && !loading ? 'loaded' : 'loading'} ${imageError ? 'has-error' : ''}`}
-              crossOrigin="anonymous"
             />
             
             {(loading || !imageLoaded) && !imageError && (
@@ -220,7 +213,7 @@ const ProductCard = ({ product, onQuickView }) => {
                 <span className="badge badge-sale">Скидка</span>
               )}
               {imageError && (
-                <span className="badge badge-error">Загрузка фото</span>
+                <span className="badge badge-error">Фото</span>
               )}
               {type === 'plant' && (
                 <span className="badge badge-plant">Растение</span>
@@ -238,20 +231,6 @@ const ProductCard = ({ product, onQuickView }) => {
                   <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z"/>
                 </svg>
               </button>
-
-              {in_stock && (
-                <button 
-                  className="quick-view-btn"
-                  onClick={handleQuickView}
-                  title="Быстрый просмотр"
-                  aria-label="Быстрый просмотр"
-                >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M1 12S5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z" strokeWidth="2"/>
-                    <circle cx="12" cy="12" r="3" strokeWidth="2"/>
-                  </svg>
-                </button>
-              )}
             </div>
           </div>
         </Link>

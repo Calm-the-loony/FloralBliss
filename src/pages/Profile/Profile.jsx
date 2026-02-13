@@ -4,7 +4,6 @@ import { useAuth } from '../../context/AuthContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import './Profile.css';
 
-
 const Icons = {
   user: '👤',
   order: '📦',
@@ -18,11 +17,13 @@ const Icons = {
   lock: '🔐'
 };
 
-// Простой компонент для изображений с обработкой ошибок
+// Компонент для изображений с обработкой ошибок
 const SimpleImage = ({ src, alt, className }) => {
   const [hasError, setHasError] = useState(false);
+  
+  const isValidSrc = src && src !== 'null' && src !== 'undefined' && src.trim() !== '';
 
-  if (!src || hasError) {
+  if (!isValidSrc || hasError) {
     return (
       <div className={`${className} image-placeholder`}>
         <span>{Icons.flower}</span>
@@ -61,7 +62,7 @@ export default function Profile() {
   
   const navigate = useNavigate();
   const { user, logout, isLoggedIn, updateUser } = useAuth();
-  const { favorites, getFavoritesCount, removeFromFavorites } = useFavorites();
+  const { favorites, removeFromFavorites } = useFavorites();
   
   const canvasRef = useRef(null);
 
@@ -106,12 +107,10 @@ export default function Profile() {
       resizeCanvas();
       window.addEventListener('resize', resizeCanvas);
       
-      // Очень тонкий точечный фон
       const draw = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = 'rgba(139, 201, 161, 0.02)';
         
-        // Очень редкие точки
         for (let i = 0; i < 15; i++) {
           const x = Math.random() * canvas.width;
           const y = Math.random() * canvas.height;
@@ -132,35 +131,31 @@ export default function Profile() {
     }
   }, [userData]);
 
-  // Загрузка заказов
+  // Загрузка заказов - ИСПРАВЛЕННАЯ ВЕРСИЯ
   const fetchOrders = async () => {
     try {
       setLoading(prev => ({ ...prev, orders: true }));
       
-      const token = localStorage.getItem('token') || localStorage.getItem('authToken');
-      
       const response = await fetch('http://localhost:5000/api/orders/user', {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token ? `Bearer ${token}` : ''
-        },
-        credentials: 'include'
+          'Content-Type': 'application/json'
+        }
       });
+
+      console.log('📡 Ответ от сервера заказов:', response.status);
 
       if (response.ok) {
         const data = await response.json();
+        console.log('📦 Получены заказы:', data);
         
-        if (data.success) {
-          setOrders(data.orders || data.data || []);
-        } else if (data.orders) {
+        if (data.success && data.orders) {
           setOrders(data.orders);
-        } else if (Array.isArray(data)) {
-          setOrders(data);
         } else {
           setOrders([]);
         }
       } else {
+        console.error('Ошибка загрузки заказов:', response.status);
         setOrders([]);
       }
     } catch (error) {
@@ -246,6 +241,27 @@ export default function Profile() {
     navigate('/');
   };
 
+  const getImageUrl = (item) => {
+    if (item.image_url) return item.image_url;
+    if (item.image) return item.image;
+    if (item.images) {
+      if (Array.isArray(item.images) && item.images.length > 0) {
+        return item.images[0];
+      }
+      if (typeof item.images === 'string') {
+        try {
+          const parsed = JSON.parse(item.images);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed[0];
+          }
+        } catch (e) {
+          return item.images;
+        }
+      }
+    }
+    return null;
+  };
+
   if (error) {
     return (
       <div className="profile-page">
@@ -274,10 +290,8 @@ export default function Profile() {
       <canvas ref={canvasRef} className="profile-canvas" />
       
       <div className="profile-container">
-        {/* Боковая панель */}
         <div className="profile-sidebar">
           <div className="sidebar-header">
-            
             <div className="user-info">
               <h2>{userData.first_name || 'Пользователь'}</h2>
               <p>{userData.email}</p>
@@ -321,9 +335,7 @@ export default function Profile() {
           </div>
         </div>
         
-        {/* Основной контент */}
         <div className="profile-main">
-          {/* Профиль */}
           {activeTab === 'profile' && (
             <div className="profile-content">
               <div className="content-header">
@@ -337,7 +349,6 @@ export default function Profile() {
               </div>
               
               <div className="profile-grid">
-                {/* Форма редактирования */}
                 <div className="edit-section">
                   {isEditing ? (
                     <div className="edit-form">
@@ -409,7 +420,6 @@ export default function Profile() {
                   )}
                 </div>
                 
-                {/* Смена пароля */}
                 <div className="password-section">
                   <h3>Безопасность</h3>
                   {showPasswordForm ? (
@@ -469,7 +479,6 @@ export default function Profile() {
             </div>
           )}
           
-          {/* Заказы */}
           {activeTab === 'orders' && (
             <OrdersTab 
               orders={orders} 
@@ -477,11 +486,12 @@ export default function Profile() {
             />
           )}
           
-          {/* Избранное */}
           {activeTab === 'favorites' && (
             <FavoritesTab 
               favorites={favorites} 
               removeFromFavorites={removeFromFavorites}
+              getImageUrl={getImageUrl}
+              Icons={Icons}
             />
           )}
         </div>
@@ -497,7 +507,7 @@ const OrdersTab = ({ orders, loading }) => {
       const date = new Date(dateString);
       return date.toLocaleDateString('ru-RU', {
         day: 'numeric',
-        month: 'short',
+        month: 'long',
         year: 'numeric'
       });
     } catch (e) {
@@ -507,12 +517,11 @@ const OrdersTab = ({ orders, loading }) => {
 
   const getStatusLabel = (status) => {
     const statusMap = {
-      'new': 'Новый',
+      'pending': 'В ожидании',
       'processing': 'В обработке',
       'shipped': 'Отправлен',
       'delivered': 'Доставлен',
       'cancelled': 'Отменен',
-      'pending': 'В ожидании',
       'completed': 'Завершен'
     };
     return statusMap[status] || status;
@@ -547,31 +556,31 @@ const OrdersTab = ({ orders, loading }) => {
     <div className="orders-content">
       <h1>Мои заказы</h1>
       <div className="orders-list">
-        {orders.map((order, index) => (
-          <div key={order.id || index} className="order-card">
+        {orders.map((order) => (
+          <div key={order.id} className="order-card">
             <div className="order-header">
               <div className="order-info">
-                <h3>Заказ #{order.order_number || order.id || '-'}</h3>
+                <h3>Заказ #{order.order_number}</h3>
                 <p className="order-date">{formatDate(order.created_at)}</p>
               </div>
-              <div className={`order-status ${order.status || 'new'}`}>
+              <div className={`order-status ${order.status}`}>
                 {getStatusLabel(order.status)}
               </div>
             </div>
             
             <div className="order-details">
-              {order.items && Array.isArray(order.items) && order.items.map((item, idx) => (
+              {order.items && order.items.map((item, idx) => (
                 <div key={idx} className="order-item">
-                  <span className="item-name">{item.name || item.product_name || 'Товар'}</span>
-                  <span className="item-quantity">×{item.quantity || 1}</span>
-                  <span className="item-price">{item.price ? `${item.price} ₽` : ''}</span>
+                  <span className="item-name">{item.name}</span>
+                  <span className="item-quantity">×{item.quantity}</span>
+                  <span className="item-price">{item.price.toLocaleString()} ₽</span>
                 </div>
               ))}
             </div>
             
             <div className="order-footer">
               <div className="order-total">
-                Итого: <span>{order.total_amount || order.total || 0} ₽</span>
+                Итого: <span>{order.total.toLocaleString()} ₽</span>
               </div>
             </div>
           </div>
@@ -582,7 +591,7 @@ const OrdersTab = ({ orders, loading }) => {
 };
 
 // Компонент избранного
-const FavoritesTab = ({ favorites, removeFromFavorites }) => {
+const FavoritesTab = ({ favorites, removeFromFavorites, getImageUrl, Icons }) => {
   if (!favorites || favorites.length === 0) {
     return (
       <div className="favorites-content">
@@ -601,33 +610,47 @@ const FavoritesTab = ({ favorites, removeFromFavorites }) => {
     <div className="favorites-content">
       <h1>Избранное</h1>
       <div className="favorites-grid">
-        {favorites.map(item => (
-          <div key={item.id} className="favorite-item">
-            <div className="favorite-image">
-              <SimpleImage 
-                src={item.image_url} 
-                alt={item.name}
-                className="favorite-img"
-              />
-            </div>
-            <div className="favorite-info">
-              <h3>{item.name || 'Букет'}</h3>
-              <p className="favorite-price">{item.price ? `${item.price} ₽` : ''}</p>
-              <div className="favorite-actions">
-                <Link to={`/product/${item.id}`} className="view-btn">
-                  Подробнее
-                </Link>
-                <button 
-                  className="remove-btn"
-                  onClick={() => removeFromFavorites(item.id)}
-                  title="Удалить из избранного"
-                >
-                  {Icons.delete}
-                </button>
+        {favorites.map(item => {
+          const imageUrl = getImageUrl(item);
+          
+          return (
+            <div key={item.id} className="favorite-item">
+              <div className="favorite-image">
+                {imageUrl ? (
+                  <img 
+                    src={imageUrl} 
+                    alt={item.name || 'Букет'}
+                    className="favorite-img"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.parentElement.innerHTML = '<div class="image-placeholder"><span>🌸</span></div>';
+                    }}
+                  />
+                ) : (
+                  <div className="image-placeholder">
+                    <span>🌸</span>
+                  </div>
+                )}
+              </div>
+              <div className="favorite-info">
+                <h3>{item.name || 'Букет'}</h3>
+                <p className="favorite-price">{item.price ? `${Number(item.price).toLocaleString()} ₽` : ''}</p>
+                <div className="favorite-actions">
+                  <Link to={`/product/${item.id}`} className="view-btn">
+                    Подробнее
+                  </Link>
+                  <button 
+                    className="remove-btn"
+                    onClick={() => removeFromFavorites(item.id)}
+                    title="Удалить из избранного"
+                  >
+                    {Icons.delete}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

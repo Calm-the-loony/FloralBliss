@@ -26,6 +26,10 @@ const sortOptions = [
   { id: 'name', name: 'По названию' }
 ];
 
+// Настройки пагинации
+const ITEMS_PER_PAGE = 12;
+const PAGINATION_VISIBLE_PAGES = 5;
+
 export default function Bouquets() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -38,6 +42,15 @@ export default function Bouquets() {
   const [sortBy, setSortBy] = useState('default');
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
+  
+  // Состояния для пагинации
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(ITEMS_PER_PAGE);
+
+  // Сброс на первую страницу при изменении фильтров
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, selectedPrice, searchQuery, sortBy]);
 
   const handleSearchChange = useCallback((value) => {
     setSearchQuery(value);
@@ -166,6 +179,56 @@ export default function Bouquets() {
     setFilteredProducts(filtered);
   }, [products, selectedCategory, selectedPrice, searchQuery, sortBy]);
 
+  // Пагинация - получаем текущие товары
+  const currentProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredProducts.slice(startIndex, endIndex);
+  }, [filteredProducts, currentPage, itemsPerPage]);
+
+  // Пагинация - общее количество страниц
+  const totalPages = useMemo(() => {
+    return Math.ceil(filteredProducts.length / itemsPerPage);
+  }, [filteredProducts, itemsPerPage]);
+
+  // Функция для переключения страницы
+  const goToPage = useCallback((page) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    // Прокрутка к верху страницы
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [totalPages]);
+
+  // Функция для перехода на следующую страницу
+  const goToNextPage = useCallback(() => {
+    if (currentPage < totalPages) {
+      goToPage(currentPage + 1);
+    }
+  }, [currentPage, totalPages, goToPage]);
+
+  // Функция для перехода на предыдущую страницу
+  const goToPrevPage = useCallback(() => {
+    if (currentPage > 1) {
+      goToPage(currentPage - 1);
+    }
+  }, [currentPage, goToPage]);
+
+  // Получение массива номеров страниц для отображения
+  const getPageNumbers = useMemo(() => {
+    const pages = [];
+    let startPage = Math.max(1, currentPage - Math.floor(PAGINATION_VISIBLE_PAGES / 2));
+    let endPage = Math.min(totalPages, startPage + PAGINATION_VISIBLE_PAGES - 1);
+    
+    if (endPage - startPage + 1 < PAGINATION_VISIBLE_PAGES) {
+      startPage = Math.max(1, endPage - PAGINATION_VISIBLE_PAGES + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }, [currentPage, totalPages]);
+
   const clearFilters = useCallback(() => {
     setSelectedCategory('all');
     setSelectedPrice('all');
@@ -195,6 +258,13 @@ export default function Bouquets() {
       !!searchQuery,
       sortBy !== 'default'
     ].filter(Boolean).length;
+  };
+
+  // Отображение диапазона товаров на текущей странице
+  const getItemsRange = () => {
+    const start = (currentPage - 1) * itemsPerPage + 1;
+    const end = Math.min(currentPage * itemsPerPage, filteredProducts.length);
+    return `${start}-${end} из ${filteredProducts.length}`;
   };
 
   return (
@@ -384,33 +454,107 @@ export default function Bouquets() {
               </button>
             </div>
           ) : (
-            <div className="products-grid">
-              {filteredProducts.map((product, index) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  index={index}
-                  onQuickView={handleQuickView}
-                />
-              ))}
-            </div>
+            <>
+              <div className="products-grid">
+                {currentProducts.map((product, index) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    index={index}
+                    onQuickView={handleQuickView}
+                  />
+                ))}
+              </div>
+
+              {/* Пагинация */}
+              {totalPages > 1 && (
+                <div className="pagination-container">
+                  <div className="pagination-info">
+                    Показано {getItemsRange()}
+                  </div>
+                  <div className="pagination">
+                    <button
+                      className="pagination-arrow"
+                      onClick={goToPrevPage}
+                      disabled={currentPage === 1}
+                      aria-label="Предыдущая страница"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+
+                    {getPageNumbers[0] > 1 && (
+                      <>
+                        <button
+                          className="pagination-number"
+                          onClick={() => goToPage(1)}
+                        >
+                          1
+                        </button>
+                        {getPageNumbers[0] > 2 && (
+                          <span className="pagination-dots">...</span>
+                        )}
+                      </>
+                    )}
+
+                    {getPageNumbers.map(page => (
+                      <button
+                        key={page}
+                        className={`pagination-number ${currentPage === page ? 'active' : ''}`}
+                        onClick={() => goToPage(page)}
+                        aria-label={`Страница ${page}`}
+                        aria-current={currentPage === page ? 'page' : undefined}
+                      >
+                        {page}
+                      </button>
+                    ))}
+
+                    {getPageNumbers[getPageNumbers.length - 1] < totalPages && (
+                      <>
+                        {getPageNumbers[getPageNumbers.length - 1] < totalPages - 1 && (
+                          <span className="pagination-dots">...</span>
+                        )}
+                        <button
+                          className="pagination-number"
+                          onClick={() => goToPage(totalPages)}
+                        >
+                          {totalPages}
+                        </button>
+                      </>
+                    )}
+
+                    <button
+                      className="pagination-arrow"
+                      onClick={goToNextPage}
+                      disabled={currentPage === totalPages}
+                      aria-label="Следующая страница"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </section>
 
-        <section className="bouquets-cta">
-          <div className="cta-content">
-            <h2>Не нашли подходящий букет?</h2>
-            <p>Мы можем создать уникальную композицию специально для вас</p>
-            <div className="cta-buttons">
-              <a href="/custom-bouquet" className="cta-button primary">
-                Создать свой букет
-              </a>
-              <a href="/delivery" className="cta-button secondary">
-                Узнать о доставке
-              </a>
-            </div>
-          </div>
-        </section>
+      <section className="custom-order-section">
+  <div className="custom-order-content">
+    <h2>Не нашли подходящий букет?</h2>
+    <p>Мы можем создать уникальную композицию специально для вас</p>
+    <div className="custom-order-buttons">
+      <a href="/custom-bouquet" className="custom-order-btn primary">
+        Создать свой букет
+      </a>
+      <a href="/delivery" className="custom-order-btn secondary">
+        Узнать о доставке
+      </a>
+    </div>
+  </div>
+</section>
       </div>
     </div>
   );

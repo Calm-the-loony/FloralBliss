@@ -391,20 +391,20 @@ export default function Compositions() {
           )}
         </section>
 
-        <section className="compositions-cta">
-          <div className="cta-content">
-            <h2>Хотите уникальную композицию?</h2>
-            <p>Наши флористы создадут эксклюзивную работу специально для вас</p>
-            <div className="cta-buttons">
-              <a href="/custom-composition" className="cta-button primary">
-                Заказать индивидуальный дизайн
-              </a>
-              <a href="/delivery" className="cta-button secondary">
-                Узнать о доставке
-              </a>
-            </div>
-          </div>
-        </section>
+       <section className="custom-composition-section">
+  <div className="custom-composition-content">
+    <h2>Хотите уникальную композицию?</h2>
+    <p>Наши флористы создадут эксклюзивную работу специально для вас</p>
+    <div className="custom-composition-buttons">
+      <a href="/custom-composition" className="custom-composition-btn primary">
+        Заказать индивидуальный дизайн
+      </a>
+      <a href="/delivery" className="custom-composition-btn secondary">
+        Узнать о доставке
+      </a>
+    </div>
+  </div>
+</section>
       </div>
     </div>
   );

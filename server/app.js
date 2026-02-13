@@ -5,6 +5,7 @@ const productRoutes = require('./routes/productRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const bouquetComponentsRoutes = require('./routes/bouquetComponents');
+const orderRoutes = require('./routes/orderRoutes');
 require('dotenv').config();
 
 const app = express();
@@ -25,6 +26,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/bouquet-components', bouquetComponentsRoutes);
+app.use('/api/orders', orderRoutes);
 
 app.get('/api/health', (req, res) => {
     res.json({ 
@@ -54,4 +56,5 @@ app.listen(PORT, () => {
     console.log(`Health check: http://localhost:${PORT}/api/health`);
     console.log(`Favorites API готов к работе`);
     console.log(`Cart API готов к работе`);
+    console.log(`Orders API готов к работе`);
 });

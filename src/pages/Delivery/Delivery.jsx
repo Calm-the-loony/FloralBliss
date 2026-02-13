@@ -335,7 +335,7 @@ export default function Delivery() {
               <Link to="/bouquets" className="delivery-cta-button primary">
                 Смотреть каталог
               </Link>
-              <Link to="/custom" className="delivery-cta-button secondary">
+              <Link to="/custom-bouquet" className="delivery-cta-button secondary">
                 Заказать дизайн
               </Link>
             </div>

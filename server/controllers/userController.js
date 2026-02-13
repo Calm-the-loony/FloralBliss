@@ -4,9 +4,13 @@ const jwt = require('jsonwebtoken');
 
 // Генерация JWT токена
 const generateToken = (userId, email) => {
+    // Убедитесь, что используете правильный секрет
+    const secret = process.env.JWT_SECRET || 'your-secret-key';
+    console.log('🔐 Генерация токена для userId:', userId);
+    
     return jwt.sign(
-        { userId, email },
-        process.env.JWT_SECRET || 'your-secret-key',
+        { id: userId, email },
+        secret,
         { expiresIn: '30d' }
     );
 };
@@ -16,7 +20,6 @@ exports.register = async (req, res) => {
     const { firstName, lastName, email, phone, password } = req.body;
 
     try {
-        // Валидация
         if (!firstName || !lastName || !email || !password) {
             return res.status(400).json({
                 success: false,
@@ -31,7 +34,6 @@ exports.register = async (req, res) => {
             });
         }
 
-        // Проверка существования пользователя
         const [existingUsers] = await pool.query(
             'SELECT id_user FROM users WHERE email = ?',
             [email]
@@ -44,18 +46,15 @@ exports.register = async (req, res) => {
             });
         }
 
-        // Хеширование пароля
         const saltRounds = 10;
         const passwordHash = await bcrypt.hash(password, saltRounds);
 
-        // Создание пользователя
         const [result] = await pool.query(
             `INSERT INTO users (first_name, last_name, email, phone, password_hash) 
              VALUES (?, ?, ?, ?, ?)`,
             [firstName, lastName, email, phone, passwordHash]
         );
 
-        // Генерация токена
         const token = generateToken(result.insertId, email);
 
         res.status(201).json({
@@ -66,8 +65,7 @@ exports.register = async (req, res) => {
                 firstName,
                 lastName,
                 email,
-                phone,
-                registrationDate: new Date()
+                phone
             },
             token
         });
@@ -93,7 +91,6 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Поиск пользователя
         const [users] = await pool.query(
             `SELECT id_user, first_name, last_name, email, phone, password_hash, role 
              FROM users WHERE email = ? AND is_active = TRUE`,
@@ -109,7 +106,6 @@ exports.login = async (req, res) => {
 
         const user = users[0];
 
-        // Проверка пароля
         const isPasswordValid = await bcrypt.compare(password, user.password_hash);
         if (!isPasswordValid) {
             return res.status(401).json({
@@ -118,13 +114,11 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Обновление времени последнего входа
         await pool.query(
             'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id_user = ?',
             [user.id_user]
         );
 
-        // Генерация токена
         const token = generateToken(user.id_user, user.email);
 
         res.json({
@@ -136,8 +130,7 @@ exports.login = async (req, res) => {
                 lastName: user.last_name,
                 email: user.email,
                 phone: user.phone,
-                role: user.role,
-                lastLogin: new Date()
+                role: user.role
             },
             token
         });
@@ -157,7 +150,7 @@ exports.getMe = async (req, res) => {
         const [users] = await pool.query(
             `SELECT id_user, first_name, last_name, email, phone, role, registration_date 
              FROM users WHERE id_user = ? AND is_active = TRUE`,
-            [req.user.userId]
+            [req.user.id]
         );
 
         if (users.length === 0) {
@@ -188,4 +181,67 @@ exports.getMe = async (req, res) => {
             message: 'Ошибка сервера'
         });
     }
+};
+
+// Обновление профиля
+exports.updateProfile = async (req, res) => {
+    try {
+        const { first_name, last_name, email, phone } = req.body;
+        const userId = req.user.id;
+
+        await pool.query(
+            `UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ? WHERE id_user = ?`,
+            [first_name, last_name, email, phone, userId]
+        );
+
+        res.json({
+            success: true,
+            message: 'Профиль обновлен'
+        });
+    } catch (error) {
+        console.error('Ошибка обновления профиля:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Ошибка сервера'
+        });
+    }
+};
+
+// Смена пароля
+exports.changePassword = async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const userId = req.user.id;
+
+        const [users] = await pool.query(
+            `SELECT password_hash FROM users WHERE id_user = ?`,
+            [userId]
+        );
+
+        const isPasswordValid = await bcrypt.compare(currentPassword, users[0].password_hash);
+        if (!isPasswordValid) {
+            return res.status(401).json({
+                success: false,
+                message: 'Текущий пароль неверен'
+            });
+        }
+
+        const newPasswordHash = await bcrypt.hash(newPassword, 10);
+        await pool.query(
+            `UPDATE users SET password_hash = ? WHERE id_user = ?`,
+            [newPasswordHash, userId]
+        );
+
+        res.json({
+            success: true,
+            message: 'Пароль успешно изменен'
+        });
+    } catch (error) {
+        console.error('Ошибка смены пароля:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Ошибка сервера'
+        });
+    }
+    
 };

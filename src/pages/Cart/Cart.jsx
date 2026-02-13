@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import './Cart.css';
 
 export default function Cart() {
+  const navigate = useNavigate();
   const { cartItems, updateQuantity, removeFromCart, calculateSubtotal, clearCart } = useCart();
   const [deliveryMethod, setDeliveryMethod] = useState('courier');
 
@@ -18,8 +19,7 @@ export default function Cart() {
   };
 
   const handleCheckout = () => {
-    alert('Заказ оформлен!');
-    clearCart();
+    navigate('/checkout');
   };
 
   if (cartItems.length === 0) {
@@ -27,10 +27,10 @@ export default function Cart() {
       <div className="cart-page">
         <div className="container">
           <div className="empty-cart">
-            <div className="empty-cart-icon">🛒</div>
+            <div className="empty-cart-icon">🌸</div>
             <h1>Корзина пуста</h1>
             <p>Добавьте товары из каталога, чтобы сделать заказ</p>
-            <Link to="/" className="cta-button primary">
+            <Link to="/bouquets" className="cta-button primary">
               Перейти в каталог
             </Link>
           </div>
@@ -63,7 +63,7 @@ export default function Cart() {
                 
                 <div className="item-details">
                   <h3 className="item-name">{item.name}</h3>
-                  <p className="item-description">{item.description}</p>
+                  <p className="item-description">{item.description?.substring(0, 80)}...</p>
                   <div className="item-price-mobile">
                     {item.price.toLocaleString()} ₽ × {item.quantity} = {(item.price * item.quantity).toLocaleString()} ₽
                   </div>
@@ -119,7 +119,7 @@ export default function Cart() {
               <div className="delivery-options">
                 <h4>Способ доставки</h4>
                 <div className="delivery-methods">
-                  <label className="delivery-option">
+                  <label className={`delivery-option ${deliveryMethod === 'courier' ? 'active' : ''}`}>
                     <input
                       type="radio"
                       name="delivery"
@@ -127,14 +127,13 @@ export default function Cart() {
                       checked={deliveryMethod === 'courier'}
                       onChange={(e) => setDeliveryMethod(e.target.value)}
                     />
-                    <span className="checkmark"></span>
-                    <div className="option-info">
+                    <div className="option-content">
                       <span className="option-title">Курьерская доставка</span>
                       <span className="option-description">Бесплатно от 1500 ₽</span>
                     </div>
                   </label>
                   
-                  <label className="delivery-option">
+                  <label className={`delivery-option ${deliveryMethod === 'pickup' ? 'active' : ''}`}>
                     <input
                       type="radio"
                       name="delivery"
@@ -142,8 +141,7 @@ export default function Cart() {
                       checked={deliveryMethod === 'pickup'}
                       onChange={(e) => setDeliveryMethod(e.target.value)}
                     />
-                    <span className="checkmark"></span>
-                    <div className="option-info">
+                    <div className="option-content">
                       <span className="option-title">Самовывоз</span>
                       <span className="option-description">г. Ростов-на-Дону, ул. Пушкинская, 150</span>
                     </div>

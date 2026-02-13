@@ -25,6 +25,9 @@ import NotFound from './pages/ErrorPages/NotFound';
 import ServerError from './pages/ErrorPages/ServerError';
 import AccessDenied from './pages/ErrorPages/AccessDenied';
 import NetworkError from './pages/ErrorPages/NetworkError';
+import ProductPage from './pages/ProductPage/ProductPage';
+import Checkout from './pages/Checkout/Checkout';
+import OrderSuccess from './pages/OrderSuccess/OrderSuccess';
 import './App.css';
 
 function CartProviderWrapper({ children }) {
@@ -81,6 +84,9 @@ function AppContent() {
             <Route path="/compositions" element={<Compositions />} />
             <Route path="/custom-bouquet" element={<CustomBouquet />} />
             <Route path="/custom-composition" element={<CustomBouquet />} />
+            <Route path="/product/:id" element={<ProductPage />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order-success" element={<OrderSuccess />} />
 
             {/* Страницы ошибок */}
             <Route path="/500" element={<ServerError />} />
