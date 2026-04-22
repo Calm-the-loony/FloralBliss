@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [token, setToken] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const API_URL = 'http://localhost:5000/api/auth';
 
@@ -38,6 +39,8 @@ export const AuthProvider = ({ children }) => {
           const data = await response.json();
           setUser(data.user);
           setIsLoggedIn(true);
+          // Проверка на администратора
+          setIsAdmin(data.user.role === 'admin' || data.user.isAdmin === true);
         } else {
           // Токен невалидный
           localStorage.removeItem('authToken');
@@ -68,6 +71,7 @@ export const AuthProvider = ({ children }) => {
         setToken(data.token);
         setUser(data.user);
         setIsLoggedIn(true);
+        setIsAdmin(data.user.role === 'admin' || data.user.isAdmin === true);
         return { success: true, user: data.user };
       } else {
         return { success: false, message: data.message };
@@ -95,6 +99,7 @@ export const AuthProvider = ({ children }) => {
         setToken(data.token);
         setUser(data.user);
         setIsLoggedIn(true);
+        setIsAdmin(data.user.role === 'admin' || data.user.isAdmin === true);
         return { success: true, user: data.user };
       } else {
         return { success: false, message: data.message };
@@ -110,12 +115,15 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setUser(null);
     setIsLoggedIn(false);
+    setIsAdmin(false);
   };
 
   const updateUser = (updatedUserData) => {
     const mergedUser = { ...user, ...updatedUserData };
     setUser(mergedUser);
-
+    if (mergedUser.role === 'admin' || mergedUser.isAdmin === true) {
+      setIsAdmin(true);
+    }
   };
 
   const value = {
@@ -123,6 +131,7 @@ export const AuthProvider = ({ children }) => {
     user,
     isLoading,
     token,
+    isAdmin,
     login,
     register,
     logout,

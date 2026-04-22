@@ -1,6 +1,5 @@
 const pool = require('../config/db');
 
-// Добавить товар в избранное
 const addToFavorites = async (req, res) => {
   try {
     const { userId, productId } = req.body;
@@ -14,7 +13,6 @@ const addToFavorites = async (req, res) => {
       });
     }
 
-    // Добавляем в БД
     const [result] = await pool.query(
       'INSERT IGNORE INTO user_favorites (user_id, product_id) VALUES (?, ?)',
       [userId, productId]
@@ -34,20 +32,18 @@ const addToFavorites = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Ошибка добавления в избранное:', error);
+    console.error('Ошибка добавления в избранное:', error);
     res.status(500).json({
       success: false,
       message: 'Ошибка сервера: ' + error.message
     });
   }
 };
-
-// Удалить товар из избранного
 const removeFromFavorites = async (req, res) => {
   try {
     const { userId, productId } = req.body;
 
-    console.log('📤 Удаление из избранного:', { userId, productId });
+    console.log('Удаление из избранного:', { userId, productId });
 
     if (!userId || !productId) {
       return res.status(400).json({
@@ -68,7 +64,7 @@ const removeFromFavorites = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Ошибка удаления из избранного:', error);
+    console.error('Ошибка удаления из избранного:', error);
     res.status(500).json({
       success: false,
       message: 'Ошибка сервера: ' + error.message
@@ -81,7 +77,7 @@ const getFavorites = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    console.log('📋 Получение избранного для пользователя:', userId);
+    console.log('Получение избранного для пользователя:', userId);
 
     if (!userId) {
       return res.status(400).json({
@@ -106,7 +102,6 @@ const getFavorites = async (req, res) => {
       ORDER BY uf.created_at DESC
     `, [userId]);
 
-    // Форматируем данные
     const formattedFavorites = favorites.map(item => {
       let images = ['/images/placeholder-flower.jpg'];
       try {
@@ -137,7 +132,7 @@ const getFavorites = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Ошибка получения избранного:', error);
+    console.error('Ошибка получения избранного:', error);
     res.status(500).json({
       success: false,
       message: 'Ошибка сервера: ' + error.message
@@ -168,7 +163,7 @@ const checkFavorite = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Ошибка проверки избранного:', error);
+    console.error('Ошибка проверки избранного:', error);
     res.status(500).json({
       success: false,
       message: 'Ошибка сервера: ' + error.message

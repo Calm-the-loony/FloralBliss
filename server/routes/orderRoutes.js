@@ -11,7 +11,7 @@ const tempAuth = (req, res, next) => {
 // Создание заказа
 router.post('/create', tempAuth, async (req, res) => {
     try {
-        console.log('📦 Создание заказа...');
+        console.log('Создание заказа...');
         
         const {
             items,
@@ -31,12 +31,11 @@ router.post('/create', tempAuth, async (req, res) => {
         const userId = req.user.id;
         const orderNumber = 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
 
-        // Преобразуем числа
         const subtotalNum = parseFloat(subtotal) || 0;
         const deliveryCostNum = parseFloat(delivery_cost) || 0;
         const totalNum = parseFloat(total) || 0;
 
-        // items уже массив, просто преобразуем в JSON строку
+  
         const itemsJson = JSON.stringify(items);
 
         const [result] = await pool.query(

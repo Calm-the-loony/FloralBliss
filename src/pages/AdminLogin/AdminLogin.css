@@ -1,0 +1,134 @@
+/* Уникальные стили для входа в админ-панель - префикс admin- */
+.admin-login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #FFFBF5 0%, #FEF8F0 50%, #FFFBF5 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 0;
+}
+
+.admin-login-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 40px 45px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  width: 100%;
+  max-width: 460px;
+  position: relative;
+  z-index: 1;
+}
+
+.admin-login-header {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.admin-login-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.admin-login-logo svg {
+  width: 28px;
+  height: 28px;
+}
+
+.admin-login-logo span {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2D5016;
+}
+
+.admin-login-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #2D5016;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #2D5016, #4A7C2A);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.admin-login-header p {
+  color: #6B5B7D;
+  font-size: 1rem;
+}
+
+.admin-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.admin-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-form-group input {
+  padding: 12px 14px;
+  border: 2px solid #E8E6E1;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+  width: 100%;
+}
+
+.admin-form-group input:focus {
+  outline: none;
+  border-color: #8BC9A1;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(139, 201, 161, 0.1);
+}
+
+.admin-form-group input.error {
+  border-color: #E74C3C;
+}
+
+.admin-error-message {
+  background: rgba(231, 76, 60, 0.1);
+  color: #E74C3C;
+  padding: 10px 14px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.admin-login-btn {
+  background: linear-gradient(135deg, #8BC9A1, #7AB890);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 8px;
+}
+
+.admin-login-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #7AB890, #6AA780);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(139, 201, 161, 0.3);
+}
+
+.admin-login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

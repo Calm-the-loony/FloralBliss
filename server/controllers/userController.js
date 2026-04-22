@@ -2,15 +2,10 @@ const pool = require('../config/db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// Генерация JWT токена
-const generateToken = (userId, email) => {
-    // Убедитесь, что используете правильный секрет
-    const secret = process.env.JWT_SECRET || 'your-secret-key';
-    console.log('🔐 Генерация токена для userId:', userId);
-    
+const generateToken = (userId, email, role) => {
     return jwt.sign(
-        { id: userId, email },
-        secret,
+        { id: userId, email, role: role || 'user' },
+        process.env.JWT_SECRET || 'your-secret-key',
         { expiresIn: '30d' }
     );
 };
@@ -50,12 +45,12 @@ exports.register = async (req, res) => {
         const passwordHash = await bcrypt.hash(password, saltRounds);
 
         const [result] = await pool.query(
-            `INSERT INTO users (first_name, last_name, email, phone, password_hash) 
-             VALUES (?, ?, ?, ?, ?)`,
+            `INSERT INTO users (first_name, last_name, email, phone, password_hash, role) 
+             VALUES (?, ?, ?, ?, ?, 'user')`,
             [firstName, lastName, email, phone, passwordHash]
         );
 
-        const token = generateToken(result.insertId, email);
+        const token = generateToken(result.insertId, email, 'user');
 
         res.status(201).json({
             success: true,
@@ -65,7 +60,8 @@ exports.register = async (req, res) => {
                 firstName,
                 lastName,
                 email,
-                phone
+                phone,
+                role: 'user'
             },
             token
         });
@@ -92,8 +88,8 @@ exports.login = async (req, res) => {
         }
 
         const [users] = await pool.query(
-            `SELECT id_user, first_name, last_name, email, phone, password_hash, role 
-             FROM users WHERE email = ? AND is_active = TRUE`,
+            `SELECT id_user, first_name, last_name, email, phone, password_hash, role, is_active 
+             FROM users WHERE email = ?`,
             [email]
         );
 
@@ -105,6 +101,13 @@ exports.login = async (req, res) => {
         }
 
         const user = users[0];
+
+        if (user.is_active === 0) {
+            return res.status(401).json({
+                success: false,
+                message: 'Аккаунт заблокирован. Обратитесь к администратору.'
+            });
+        }
 
         const isPasswordValid = await bcrypt.compare(password, user.password_hash);
         if (!isPasswordValid) {
@@ -119,7 +122,7 @@ exports.login = async (req, res) => {
             [user.id_user]
         );
 
-        const token = generateToken(user.id_user, user.email);
+        const token = generateToken(user.id_user, user.email, user.role);
 
         res.json({
             success: true,
@@ -148,8 +151,8 @@ exports.login = async (req, res) => {
 exports.getMe = async (req, res) => {
     try {
         const [users] = await pool.query(
-            `SELECT id_user, first_name, last_name, email, phone, role, registration_date 
-             FROM users WHERE id_user = ? AND is_active = TRUE`,
+            `SELECT id_user, first_name, last_name, email, phone, role, registration_date, is_active
+             FROM users WHERE id_user = ?`,
             [req.user.id]
         );
 
@@ -170,7 +173,8 @@ exports.getMe = async (req, res) => {
                 email: user.email,
                 phone: user.phone,
                 role: user.role,
-                registrationDate: user.registration_date
+                registrationDate: user.registration_date,
+                is_active: user.is_active
             }
         });
 
@@ -243,5 +247,4 @@ exports.changePassword = async (req, res) => {
             message: 'Ошибка сервера'
         });
     }
-    
 };

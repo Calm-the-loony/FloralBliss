@@ -123,7 +123,7 @@ const BouquetShowcase = () => {
           <div className="cta__content">
             <h3 className="cta__title">Не нашли подходящий вариант?</h3>
             <p className="cta__description">
-              В нашем каталоге более 100 готовых букетов и возможность создать уникальную композицию
+              В нашем каталоге много готовых букетов и возможность создать уникальную композицию
             </p>
             <div className="cta__buttons">
               <a href="/bouquets" className="cta__button primary">Смотреть весь каталог</a>

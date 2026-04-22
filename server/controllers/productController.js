@@ -89,18 +89,18 @@ const getProductsByType = async (type = null) => {
 
 const getBouquets = async (req, res) => {
   try {
-    console.log('💐 Получение букетов из БД...');
+    console.log('Получение букетов из БД...');
     
     const formattedProducts = await getProductsByType('bouquet');
     
-    console.log(`✅ Найдено ${formattedProducts.length} букетов`);
+    console.log(`Найдено ${formattedProducts.length} букетов`);
     res.json({
       success: true,
       data: formattedProducts,
       count: formattedProducts.length
     });
   } catch (error) {
-    console.error('❌ Ошибка получения букетов:', error);
+    console.error('Ошибка получения букетов:', error);
     res.status(500).json({
       success: false,
       message: 'Ошибка при получении букетов: ' + error.message
@@ -110,18 +110,18 @@ const getBouquets = async (req, res) => {
 
 const getPlants = async (req, res) => {
   try {
-    console.log('🌿 Получение растений из БД...');
+    console.log('Получение растений из БД...');
     
     const formattedProducts = await getProductsByType('plant');
     
-    console.log(`✅ Найдено ${formattedProducts.length} растений`);
+    console.log(`Найдено ${formattedProducts.length} растений`);
     res.json({
       success: true,
       data: formattedProducts,
       count: formattedProducts.length
     });
   } catch (error) {
-    console.error('❌ Ошибка получения растений:', error);
+    console.error('Ошибка получения растений:', error);
     res.status(500).json({
       success: false,
       message: 'Ошибка при получении растений: ' + error.message
@@ -131,18 +131,18 @@ const getPlants = async (req, res) => {
 
 const getCompositions = async (req, res) => {
   try {
-    console.log('🎨 Получение композиций из БД...');
+    console.log('Получение композиций из БД...');
     
     const formattedProducts = await getProductsByType('composition');
     
-    console.log(`✅ Найдено ${formattedProducts.length} композиций`);
+    console.log(`Найдено ${formattedProducts.length} композиций`);
     res.json({
       success: true,
       data: formattedProducts,
       count: formattedProducts.length
     });
   } catch (error) {
-    console.error('❌ Ошибка получения композиций:', error);
+    console.error('Ошибка получения композиций:', error);
     res.status(500).json({
       success: false,
       message: 'Ошибка при получении композиций: ' + error.message
@@ -152,18 +152,18 @@ const getCompositions = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    console.log('📦 Получение всех товаров из БД...');
+    console.log('Получение всех товаров из БД...');
     
     const formattedProducts = await getProductsByType();
     
-    console.log(`✅ Найдено ${formattedProducts.length} товаров`);
+    console.log(`Найдено ${formattedProducts.length} товаров`);
     res.json({
       success: true,
       data: formattedProducts,
       count: formattedProducts.length
     });
   } catch (error) {
-    console.error('❌ Ошибка получения товаров:', error);
+    console.error('Ошибка получения товаров:', error);
     res.status(500).json({
       success: false,
       message: 'Ошибка при получении товаров: ' + error.message
@@ -173,7 +173,7 @@ const getAllProducts = async (req, res) => {
 
 const getFeaturedProducts = async (req, res) => {
   try {
-    console.log('⭐ Получение featured товаров...');
+    console.log('Получение featured товаров (только букеты)...');
     
     const [products] = await pool.query(`
       SELECT 
@@ -191,7 +191,7 @@ const getFeaturedProducts = async (req, res) => {
         c.slug as category_slug
       FROM products p
       LEFT JOIN categories c ON p.category_id = c.id
-      WHERE p.in_stock = TRUE
+      WHERE p.in_stock = TRUE AND p.type = 'bouquet'
       ORDER BY p.created_at DESC
       LIMIT 6
     `);
@@ -201,7 +201,7 @@ const getFeaturedProducts = async (req, res) => {
       name: product.name,
       price: parseFloat(product.price) || 0,
       original_price: product.original_price ? parseFloat(product.original_price) : null,
-      description: product.description || 'Красивый продукт',
+      description: product.description || 'Красивый букет для особого момента',
       images: processImages(product.images),
       category: { 
         id: product.category_id,
@@ -213,13 +213,14 @@ const getFeaturedProducts = async (req, res) => {
       is_customizable: Boolean(product.is_customizable)
     }));
 
+    console.log(`Найдено ${formattedProducts.length} featured букетов`);
     res.json({
       success: true,
       data: formattedProducts,
       count: formattedProducts.length
     });
   } catch (error) {
-    console.error('❌ Ошибка получения товаров:', error);
+    console.error('Ошибка получения featured товаров:', error);
     res.status(500).json({
       success: false,
       message: 'Ошибка при получении товаров: ' + error.message
@@ -287,7 +288,7 @@ const createOrUpdateProduct = async (req, res) => {
       message: 'Продукт успешно сохранен'
     });
   } catch (error) {
-    console.error('❌ Ошибка сохранения продукта:', error);
+    console.error('Ошибка сохранения продукта:', error);
     res.status(500).json({
       success: false,
       message: 'Ошибка при сохранении продукта: ' + error.message

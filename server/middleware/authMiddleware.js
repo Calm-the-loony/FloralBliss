@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const authMiddleware = (req, res, next) => {
-    // Пробуем получить токен из заголовка
     const authHeader = req.headers.authorization;
     
     if (!authHeader) {
@@ -11,7 +11,6 @@ const authMiddleware = (req, res, next) => {
         });
     }
     
-    // Убираем 'Bearer ' из строки
     const token = authHeader.startsWith('Bearer ') ? authHeader.substring(7) : authHeader;
     
     if (!token) {

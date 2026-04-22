@@ -1,6 +1,6 @@
 const pool = require('../config/db');
 
-// Добавить товар в корзину
+// Добавление товара в корзину
 const addToCart = async (req, res) => {
   try {
     const { userId, productId, quantity = 1 } = req.body;
@@ -47,7 +47,7 @@ const addToCart = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Ошибка добавления в корзину:', error);
+    console.error('Ошибка добавления в корзину:', error);
     res.status(500).json({
       success: false,
       message: 'Ошибка сервера: ' + error.message
@@ -60,7 +60,7 @@ const updateQuantity = async (req, res) => {
   try {
     const { userId, productId, quantity } = req.body;
 
-    console.log('📊 Обновление количества:', { userId, productId, quantity });
+    console.log('Обновление количества:', { userId, productId, quantity });
 
     if (!userId || !productId || quantity === undefined) {
       return res.status(400).json({
@@ -94,7 +94,7 @@ const updateQuantity = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Ошибка обновления количества:', error);
+    console.error('Ошибка обновления количества:', error);
     res.status(500).json({
       success: false,
       message: 'Ошибка сервера: ' + error.message
@@ -107,7 +107,7 @@ const removeFromCart = async (req, res) => {
   try {
     const { userId, productId } = req.body;
 
-    console.log('🗑️ Удаление из корзины:', { userId, productId });
+    console.log('Удаление из корзины:', { userId, productId });
 
     if (!userId || !productId) {
       return res.status(400).json({
@@ -142,7 +142,7 @@ const getCart = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    console.log('📋 Получение корзины для пользователя:', userId);
+    console.log('Получение корзины для пользователя:', userId);
 
     if (!userId) {
       return res.status(400).json({
@@ -207,7 +207,7 @@ const getCart = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Ошибка получения корзины:', error);
+    console.error('Ошибка получения корзины:', error);
     res.status(500).json({
       success: false,
       message: 'Ошибка сервера: ' + error.message
@@ -220,7 +220,7 @@ const clearCart = async (req, res) => {
   try {
     const { userId } = req.body;
 
-    console.log('🧹 Очистка корзины для пользователя:', userId);
+    console.log('Очистка корзины для пользователя:', userId);
 
     if (!userId) {
       return res.status(400).json({
@@ -241,7 +241,7 @@ const clearCart = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Ошибка очистки корзины:', error);
+    console.error('Ошибка очистки корзины:', error);
     res.status(500).json({
       success: false,
       message: 'Ошибка сервера: ' + error.message

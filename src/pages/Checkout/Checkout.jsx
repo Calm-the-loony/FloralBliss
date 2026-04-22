@@ -43,6 +43,40 @@ export default function Checkout() {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Функция для форматирования элемента корзины в детальный вид
+  const formatCartItem = (item) => {
+    if (item.isCustom && item.customDetails) {
+      // Для кастомного букета - показываем подробный состав
+      const composition = item.customDetails.composition || {};
+      return {
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        image: item.image,
+        isCustom: true,
+        customDetails: {
+          composition: composition,
+          flowers: composition.flowers || [],
+          greenery: composition.greenery || [],
+          packaging: composition.packaging,
+          bow: composition.bow,
+          size: composition.size,
+          specialInstructions: composition.specialInstructions || item.customDetails.instructions || ''
+        }
+      };
+    }
+    // Для обычного товара
+    return {
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      image: item.image,
+      isCustom: false
+    };
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -56,14 +90,11 @@ export default function Checkout() {
 
     setLoading(true);
 
+    // Форматируем каждый элемент корзины
+    const formattedItems = cartItems.map(item => formatCartItem(item));
+
     const orderData = {
-      items: cartItems.map(item => ({
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-        image: item.image
-      })),
+      items: formattedItems,
       subtotal: subtotal,
       delivery_method: deliveryMethod,
       delivery_cost: deliveryCost,

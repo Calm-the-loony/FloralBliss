@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
 
-// Получить все компоненты для букетов
 router.get('/', async (req, res) => {
   try {
     const [components] = await pool.query(`
@@ -24,7 +23,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Получить компоненты по типу
 router.get('/type/:type', async (req, res) => {
   try {
     const { type } = req.params;

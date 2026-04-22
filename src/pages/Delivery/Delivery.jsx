@@ -36,11 +36,6 @@ const Icons = {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
       <path d="M12 2C8.1 2 5 5.1 5 9c0 5.3 7 13 7 13s7-7.7 7-13c0-3.9-3.1-7-7-7z"/>
     </svg>
-  ),
-  russia: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <path d="M3 5h18M3 9h18M3 13h12M3 17h10M3 21h8"/>
-    </svg>
   )
 };
 
@@ -67,30 +62,22 @@ export default function Delivery() {
       description: 'Доставка в ближайшие города области',
       features: ['Курьерская доставка', 'Предварительный звонок', 'Точное время доставки'],
       icon: Icons.region
-    },
-    {
-      id: 'russia',
-      city: 'По России',
-      time: '1–3 дня',
-      price: 'от 400 ₽',
-      minOrder: 'от 2 500 ₽',
-      description: 'Доставка транспортными компаниями по всей стране',
-      features: ['СДЭК, Boxberry', 'Трек-номер', 'Страхование'],
-      icon: Icons.russia
     }
   ];
 
   const deliveryZones = [
     { zone: 'Центр города', time: '1–2 часа', price: 'Бесплатно', minOrder: '1 500 ₽' },
-    { zone: 'Северный, Западный', time: '2–3 часа', price: '200 ₽', minOrder: '1 500 ₽' },
+    { zone: 'Северный', time: '2–3 часа', price: '200 ₽', minOrder: '1 500 ₽' },
+    { zone: 'Западный', time: '2–3 часа', price: '200 ₽', minOrder: '1 500 ₽' },
     { zone: 'Александровка', time: '2–3 часа', price: '250 ₽', minOrder: '1 800 ₽' },
-    { zone: 'Нахичевань, ЗЖМ', time: '2–3 часа', price: '200 ₽', minOrder: '1 500 ₽' }
+    { zone: 'Нахичевань', time: '2–3 часа', price: '200 ₽', minOrder: '1 500 ₽' },
+    { zone: 'ЗЖМ', time: '2–3 часа', price: '200 ₽', minOrder: '1 500 ₽' }
   ];
 
   const workingHours = [
-    { day: 'Пн–Пт', hours: '8:00–22:00' },
-    { day: 'Сб', hours: '9:00–21:00' },
-    { day: 'Вс', hours: '9:00–20:00' }
+    { day: 'Понедельник – Пятница', hours: '8:00 – 22:00' },
+    { day: 'Суббота', hours: '9:00 – 21:00' },
+    { day: 'Воскресенье', hours: '9:00 – 20:00' }
   ];
 
   const faqItems = [
@@ -100,7 +87,7 @@ export default function Delivery() {
     },
     {
       question: 'Что если меня не будет дома?',
-      answer: 'Курьер свяжется за 30–60 минут. Если вас не будет, мы согласуем другое время или оставим букет соседям/консьержу.'
+      answer: 'Курьер свяжется за 30–60 минут. Если вас не будет, мы согласуем другое время или оставим букет соседям или консьержу.'
     },
     {
       question: 'Можно ли изменить адрес после оформления?',
@@ -117,22 +104,24 @@ export default function Delivery() {
       <section className="delivery-hero">
         <div className="container">
           <div className="delivery-hero-content">
-            <h1>Доставка, как забота</h1>
+            <h1>Доставка цветов</h1>
             <p className="hero-subtitle">
-              Бережно доставляем свежие цветы по Ростову-на-Дону и всей России.  
-              Каждый букет — в идеальном состоянии, вовремя и с улыбкой.
+              Бережно доставляем свежие цветы по Ростову-на-Дону и области.<br />
+              Каждый букет — в идеальном состоянии, вовремя и с заботой.
             </p>
             <div className="hero-features">
-              {[
-                { icon: Icons.truck, text: 'Бесплатно от 1 500 ₽' },
-                { icon: Icons.clock, text: 'От 1 часа по городу' },
-                { icon: Icons.photo, text: 'Фотоотчёт о доставке' }
-              ].map((item, i) => (
-                <div key={i} className="feature">
-                  <div className="feature-icon">{item.icon}</div>
-                  <span className="feature-text">{item.text}</span>
-                </div>
-              ))}
+              <div className="feature">
+                <div className="feature-icon">{Icons.truck}</div>
+                <span className="feature-text">Бесплатно от 1 500 ₽</span>
+              </div>
+              <div className="feature">
+                <div className="feature-icon">{Icons.clock}</div>
+                <span className="feature-text">Доставка от 1 часа</span>
+              </div>
+              <div className="feature">
+                <div className="feature-icon">{Icons.photo}</div>
+                <span className="feature-text">Фотоотчёт о доставке</span>
+              </div>
             </div>
           </div>
         </div>
@@ -145,7 +134,7 @@ export default function Delivery() {
 
       <section className="delivery-options">
         <div className="container">
-          <h2>Выберите, как вам удобно</h2>
+          <h2>Выберите регион доставки</h2>
           <div className="tabs-container">
             <div className="tabs-header">
               {deliveryOptions.map(option => (
@@ -155,7 +144,7 @@ export default function Delivery() {
                   onClick={() => setActiveTab(option.id)}
                 >
                   <div className="tab-icon">{option.icon}</div>
-                  {option.city}
+                  <span>{option.city}</span>
                 </button>
               ))}
             </div>
@@ -169,16 +158,18 @@ export default function Delivery() {
                         <p className="option-description">{option.description}</p>
                       </div>
                       <div className="option-stats">
-                        {[
-                          { label: 'Время', value: option.time },
-                          { label: 'Стоимость', value: option.price },
-                          { label: 'Мин. заказ', value: option.minOrder }
-                        ].map((stat, i) => (
-                          <div key={i} className="stat">
-                            <div className="stat-value">{stat.value}</div>
-                            <div className="stat-label">{stat.label}</div>
-                          </div>
-                        ))}
+                        <div className="stat">
+                          <div className="stat-value">{option.time}</div>
+                          <div className="stat-label">Время доставки</div>
+                        </div>
+                        <div className="stat">
+                          <div className="stat-value">{option.price}</div>
+                          <div className="stat-label">Стоимость</div>
+                        </div>
+                        <div className="stat">
+                          <div className="stat-value">{option.minOrder}</div>
+                          <div className="stat-label">Мин. заказ</div>
+                        </div>
                       </div>
                     </div>
                     <div className="option-features">
@@ -187,7 +178,7 @@ export default function Delivery() {
                         {option.features.map((feature, i) => (
                           <div key={i} className="feature-item">
                             <div className="check-icon">{Icons.check}</div>
-                            {feature}
+                            <span>{feature}</span>
                           </div>
                         ))}
                       </div>
@@ -202,69 +193,58 @@ export default function Delivery() {
 
       <section className="delivery-zones">
         <div className="container">
-          <h2>Зоны доставки по Ростову</h2>
-          
-          <div className="zones-container">
-            <div className="zones-visual">
-              <div className="city-center-map">
-                {['Центр', 'Северный', 'Александровка', 'ЗЖМ'].map((zone, i) => (
-                  <div key={i} className="map-zone">{zone}</div>
-                ))}
-              </div>
-              
-              <div className="zone-list">
-                <h3>Все районы города</h3>
-                <div className="zones-grid">
-                  {deliveryZones.map((zone, i) => (
-                    <div key={i} className="zone-card">
-                      <div className="zone-header">
-                        <h3>{zone.zone}</h3>
-                        <div className="zone-price">{zone.price}</div>
-                      </div>
-                      <div className="zone-details">
-                        <div className="detail">
-                          <span className="detail-label">Время доставки</span>
-                          <span className="detail-value">{zone.time}</span>
-                        </div>
-                        <div className="detail">
-                          <span className="detail-label">Минимальный заказ</span>
-                          <span className="detail-value">{zone.minOrder}</span>
-                        </div>
-                        <div className="detail">
-                          <span className="detail-label">Доставка</span>
-                          <span className="detail-value">{zone.time === '1–2 часа' ? 'Быстрая' : 'Стандартная'}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+          <h2>Зоны доставки по Ростову-на-Дону</h2>
+          <div className="zones-grid">
+            {deliveryZones.map((zone, i) => (
+              <div key={i} className="zone-card">
+                <div className="zone-header">
+                  <h3>{zone.zone}</h3>
+                  <div className="zone-price">{zone.price}</div>
+                </div>
+                <div className="zone-details">
+                  <div className="detail">
+                    <span className="detail-label">Время доставки</span>
+                    <span className="detail-value">{zone.time}</span>
+                  </div>
+                  <div className="detail">
+                    <span className="detail-label">Минимальный заказ</span>
+                    <span className="detail-value">{zone.minOrder}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <p className="zone-note">
-              * Бесплатная доставка действует при заказе от 1 500 ₽ в пределах центра города. 
-              При заказе в другие районы стоимость доставки фиксированная и не зависит от суммы заказа.
-            </p>
+            ))}
           </div>
+          <p className="zone-note">
+            * Бесплатная доставка действует при заказе от 1 500 ₽ в пределах центра города.<br />
+            При заказе в другие районы стоимость доставки фиксированная.
+          </p>
         </div>
       </section>
 
       <section className="how-it-works">
         <div className="container">
-          <h2>Как проходит доставка</h2>
+          <h2>Как мы доставляем</h2>
           <div className="steps-grid">
-            {[
-              { num: 1, title: 'Выберите букет', desc: 'Из каталога или создайте уникальный' },
-              { num: 2, title: 'Укажите детали', desc: 'Адрес, время, открытку и пожелания' },
-              { num: 3, title: 'Подтверждение', desc: 'Мы свяжемся для уточнения деталей' },
-              { num: 4, title: 'Доставка', desc: 'Курьер привезёт букет и отправит фотоотчёт' }
-            ].map((step, i) => (
-              <div key={i} className="step-card">
-                <div className="step-number">{step.num}</div>
-                <h3>{step.title}</h3>
-                <p>{step.desc}</p>
-              </div>
-            ))}
+            <div className="step-card">
+              <div className="step-number">1</div>
+              <h3>Выберите букет</h3>
+              <p>Из каталога или создайте уникальную композицию</p>
+            </div>
+            <div className="step-card">
+              <div className="step-number">2</div>
+              <h3>Укажите детали</h3>
+              <p>Адрес, время, открытку и особые пожелания</p>
+            </div>
+            <div className="step-card">
+              <div className="step-number">3</div>
+              <h3>Подтверждение</h3>
+              <p>Мы свяжемся для уточнения всех деталей</p>
+            </div>
+            <div className="step-card">
+              <div className="step-number">4</div>
+              <h3>Доставка</h3>
+              <p>Курьер привезёт букет и пришлёт фотоотчёт</p>
+            </div>
           </div>
         </div>
       </section>
@@ -273,7 +253,7 @@ export default function Delivery() {
         <div className="container">
           <div className="info-grid">
             <div className="info-card">
-              <h3>🕒 Время работы</h3>
+              <h3>Время работы</h3>
               <div className="schedule">
                 {workingHours.map((item, i) => (
                   <div key={i} className="schedule-item">
@@ -282,29 +262,29 @@ export default function Delivery() {
                   </div>
                 ))}
               </div>
-              <p className="note">* Ночная доставка (22:00–8:00) — +800 ₽</p>
+              <p className="note">Ночная доставка (22:00–8:00) — +800 ₽</p>
             </div>
             <div className="info-card">
-              <h3>💌 Свяжитесь с нами</h3>
+              <h3>Свяжитесь с нами</h3>
               <div className="contacts">
                 <div className="contact-item">
-                  <span className="contact-label">Телефон:</span>
+                  <span className="contact-label">Телефон</span>
                   <a href="tel:+78631234567" className="contact-value">+7 (863) 123-45-67</a>
                 </div>
                 <div className="contact-item">
-                  <span className="contact-label">Telegram:</span>
+                  <span className="contact-label">Telegram</span>
                   <a href="https://t.me/floralbliss_rostov" className="contact-value">@floralbliss_rostov</a>
                 </div>
                 <div className="contact-item">
-                  <span className="contact-label">Email:</span>
+                  <span className="contact-label">Email</span>
                   <a href="mailto:delivery@floralbliss.ru" className="contact-value">delivery@floralbliss.ru</a>
                 </div>
                 <div className="contact-item">
-                  <span className="contact-label">Адрес:</span>
-                  <span className="contact-value">Ростов-на-Дону, ул. Пушкинская, 150</span>
+                  <span className="contact-label">Адрес</span>
+                  <span className="contact-value">ул. Пушкинская, 150</span>
                 </div>
               </div>
-              <p className="note">Пишите в Telegram — ответим мгновенно 💐</p>
+              <p className="note">Пишите в Telegram — ответим мгновенно</p>
             </div>
           </div>
         </div>
@@ -312,7 +292,7 @@ export default function Delivery() {
 
       <section className="delivery-faq">
         <div className="container">
-          <h2>Частые вопросы</h2>
+          <h2>Часто спрашивают</h2>
           <div className="faq-grid">
             {faqItems.map((item, i) => (
               <div key={i} className="faq-item">
@@ -324,23 +304,17 @@ export default function Delivery() {
         </div>
       </section>
 
-      <section className="delivery-cta-harmonized">
-        <div className="delivery-cta-container">
+      <section className="delivery-cta">
+        {/* <div className="delivery-cta-container">
           <div className="delivery-cta-content">
-            <h2>Готовы заказать доставку в Ростове?</h2>
-            <p className="delivery-cta-subtitle">
-              Выберите свежий букет из каталога — доставим его бережно и вовремя по всему городу.
-            </p>
+            <h2>Готовы заказать?</h2>
+            <p>Выберите свежий букет из каталога — доставим его бережно и вовремя</p>
             <div className="delivery-cta-buttons">
-              <Link to="/bouquets" className="delivery-cta-button primary">
-                Смотреть каталог
-              </Link>
-              <Link to="/custom-bouquet" className="delivery-cta-button secondary">
-                Заказать дизайн
-              </Link>
+              <Link to="/bouquets" className="delivery-cta-button primary">Смотреть каталог</Link>
+              <Link to="/custom-bouquet" className="delivery-cta-button secondary">Создать свой букет</Link>
             </div>
           </div>
-        </div>
+        </div> */}
       </section>
     </div>
   );

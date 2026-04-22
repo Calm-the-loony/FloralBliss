@@ -28,6 +28,8 @@ import NetworkError from './pages/ErrorPages/NetworkError';
 import ProductPage from './pages/ProductPage/ProductPage';
 import Checkout from './pages/Checkout/Checkout';
 import OrderSuccess from './pages/OrderSuccess/OrderSuccess';
+import AdminLogin from './pages/AdminLogin/AdminLogin';
+import AdminPanel from './pages/AdminPanel/AdminPanel';
 import './App.css';
 
 function CartProviderWrapper({ children }) {
@@ -73,6 +75,11 @@ function AppContent() {
             <Route path="/login" element={<AuthForm type="login" />} />
             <Route path="/register" element={<AuthForm type="register" />} />
             <Route path="/profile" element={<Profile />} />
+            
+            {/* Админ-панель */}
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminPanel />} />
+            
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/about" element={<AboutUs />} />
