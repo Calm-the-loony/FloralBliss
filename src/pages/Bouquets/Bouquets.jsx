@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import ProductCard from '../../components/ProductCard/ProductCard';
+import { getApiUrl } from '../../config';
 import './Bouquets.css';
 
 const categories = [
@@ -74,7 +75,7 @@ export default function Bouquets() {
         setLoading(true);
         setError(null);
         
-        const response = await fetch('http://localhost:5000/api/products/all');
+        const response = await fetch(getApiUrl('/products/all'));
         
         if (!response.ok) {
           throw new Error(`Ошибка сервера: ${response.status}`);
@@ -84,7 +85,6 @@ export default function Bouquets() {
         
         if (result.success) {
           const bouquetsOnly = result.data.filter(product => product.type === 'bouquet');
-          
           setProducts(bouquetsOnly);
         } else {
           throw new Error(result.message || 'Ошибка при загрузке товаров');

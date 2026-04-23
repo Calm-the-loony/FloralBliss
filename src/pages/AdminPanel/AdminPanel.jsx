@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getApiUrl } from '../../config';
 import './AdminPanel.css';
 
 export default function AdminPanel() {
@@ -13,7 +14,6 @@ export default function AdminPanel() {
   const [expandedOrder, setExpandedOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   
-  // Состояния для модального окна добавления товара
   const [showProductModal, setShowProductModal] = useState(false);
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -48,7 +48,7 @@ export default function AdminPanel() {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:5000/api/admin/panel/stats', {
+      const response = await fetch(getApiUrl('/admin/panel/stats'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -64,7 +64,7 @@ export default function AdminPanel() {
     setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:5000/api/admin/panel/orders', {
+      const response = await fetch(getApiUrl('/admin/panel/orders'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -82,7 +82,7 @@ export default function AdminPanel() {
     setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:5000/api/admin/panel/users', {
+      const response = await fetch(getApiUrl('/admin/panel/users'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -100,7 +100,7 @@ export default function AdminPanel() {
     setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:5000/api/admin/panel/products', {
+      const response = await fetch(getApiUrl('/admin/panel/products'), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -117,7 +117,7 @@ export default function AdminPanel() {
   const updateOrderStatus = async (orderId, status) => {
     try {
       const token = localStorage.getItem('adminToken');
-      await fetch(`http://localhost:5000/api/admin/panel/orders/${orderId}/status`, {
+      await fetch(getApiUrl(`/admin/panel/orders/${orderId}/status`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ export default function AdminPanel() {
   const updateProductStatus = async (productId, in_stock, is_active) => {
     try {
       const token = localStorage.getItem('adminToken');
-      await fetch(`http://localhost:5000/api/admin/panel/products/${productId}`, {
+      await fetch(getApiUrl(`/admin/panel/products/${productId}`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ export default function AdminPanel() {
   const updateUserRole = async (userId, role) => {
     try {
       const token = localStorage.getItem('adminToken');
-      await fetch(`http://localhost:5000/api/admin/panel/users/${userId}/role`, {
+      await fetch(getApiUrl(`/admin/panel/users/${userId}/role`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -169,7 +169,7 @@ export default function AdminPanel() {
   const toggleUserBlock = async (userId) => {
     try {
       const token = localStorage.getItem('adminToken');
-      await fetch(`http://localhost:5000/api/admin/panel/users/${userId}/toggle-block`, {
+      await fetch(getApiUrl(`/admin/panel/users/${userId}/toggle-block`), {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -236,7 +236,7 @@ export default function AdminPanel() {
     setProductSubmitting(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch('http://localhost:5000/api/admin/panel/products', {
+      const response = await fetch(getApiUrl('/admin/panel/products'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -440,12 +440,11 @@ export default function AdminPanel() {
                                         <span className="item-quantity">× {item.quantity}</span>
                                         <span className="item-price">{item.price?.toLocaleString()} ₽</span>
                                       </div>
-                                      
                                       {item.isCustom && item.customDetails && (
                                         <div className="custom-details">
                                           {item.customDetails.composition?.flowers?.length > 0 && (
                                             <div className="custom-flowers">
-                                              <strong>🌺 Цветы:</strong>
+                                              <strong>Цветы:</strong>
                                               <div className="custom-flowers-list">
                                                 {item.customDetails.composition.flowers.map((flower, fIdx) => (
                                                   <div key={fIdx} className="custom-flower-item">
@@ -459,10 +458,9 @@ export default function AdminPanel() {
                                               </div>
                                             </div>
                                           )}
-                                          
                                           {item.customDetails.composition?.greenery?.length > 0 && (
                                             <div className="custom-greenery">
-                                              <strong>🌿 Зелень:</strong>
+                                              <strong>Зелень:</strong>
                                               <div className="custom-greenery-list">
                                                 {item.customDetails.composition.greenery.map((g, gIdx) => (
                                                   <div key={gIdx} className="custom-greenery-item">
@@ -473,35 +471,31 @@ export default function AdminPanel() {
                                               </div>
                                             </div>
                                           )}
-                                          
                                           {item.customDetails.composition?.packaging && (
                                             <div className="custom-packaging">
-                                              <strong>📦 Упаковка:</strong>
+                                              <strong>Упаковка:</strong>
                                               <span>{item.customDetails.composition.packaging.name}</span>
                                               <span className="color-dot-small" style={{ backgroundColor: item.customDetails.composition.packaging.hex }}></span>
                                               <span>{item.customDetails.composition.packaging.shade || item.customDetails.composition.packaging.color}</span>
                                             </div>
                                           )}
-                                          
                                           {item.customDetails.composition?.bow && (
                                             <div className="custom-bow">
-                                              <strong>🎀 Бант:</strong>
+                                              <strong>Бант:</strong>
                                               <span>{item.customDetails.composition.bow.name}</span>
                                               <span className="color-dot-small" style={{ backgroundColor: item.customDetails.composition.bow.hex }}></span>
                                               <span>{item.customDetails.composition.bow.shade}</span>
                                             </div>
                                           )}
-                                          
                                           {item.customDetails.composition?.size && (
                                             <div className="custom-size">
-                                              <strong>📏 Размер:</strong>
+                                              <strong>Размер:</strong>
                                               <span>{item.customDetails.composition.size}</span>
                                             </div>
                                           )}
-                                          
                                           {item.customDetails.composition?.specialInstructions && (
                                             <div className="custom-instructions">
-                                              <strong>💬 Пожелания:</strong>
+                                              <strong>Пожелания:</strong>
                                               <p>{item.customDetails.composition.specialInstructions}</p>
                                             </div>
                                           )}
@@ -638,7 +632,6 @@ export default function AdminPanel() {
         </div>
       </div>
 
-      {/* Модальное окно добавления товара */}
       {showProductModal && (
         <div className="admin-modal-overlay" onClick={() => setShowProductModal(false)}>
           <div className="admin-modal" onClick={(e) => e.stopPropagation()}>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../../components/ProductCard/ProductCard';
+import { getApiUrl } from '../../config';
 import './Plants.css';
 
 const priceRanges = [
@@ -25,7 +26,6 @@ const sortOptions = [
   { id: 'height', name: 'По высоте' }
 ];
 
-// Настройки пагинации
 const ITEMS_PER_PAGE = 12;
 const PAGINATION_VISIBLE_PAGES = 5;
 
@@ -78,7 +78,7 @@ export default function Plants() {
         setLoading(true);
         setError(null);
         
-        const response = await fetch('http://localhost:5000/api/products/plants');
+        const response = await fetch(getApiUrl('/products/plants'));
         
         if (!response.ok) {
           throw new Error(`Ошибка сервера: ${response.status}`);
@@ -104,7 +104,6 @@ export default function Plants() {
     fetchPlants();
   }, []);
 
-  // Функция для парсинга тегов
   const parseTags = (tags) => {
     if (!tags) return [];
     try {
@@ -119,7 +118,6 @@ export default function Plants() {
     }
   };
 
-  // Определение сложности ухода из care_instructions
   const getCareLevel = (careInstructions) => {
     if (!careInstructions) return 'medium';
     const text = careInstructions.toLowerCase();
@@ -132,7 +130,6 @@ export default function Plants() {
     return 'medium';
   };
 
-  // Фильтрация и сортировка
   useEffect(() => {
     if (!products.length) {
       setFilteredProducts([]);
@@ -157,7 +154,6 @@ export default function Plants() {
       });
     }
 
-    // Поиск по названию, описанию и тегам
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(plant => {
@@ -168,7 +164,6 @@ export default function Plants() {
       });
     }
 
-    // Сортировка
     switch (sortBy) {
       case 'price-asc':
         filtered.sort((a, b) => {
@@ -198,7 +193,6 @@ export default function Plants() {
     setFilteredProducts(filtered);
   }, [products, selectedPrice, selectedCare, searchQuery, sortBy]);
 
-  // Пагинация 
   const currentProducts = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -212,7 +206,6 @@ export default function Plants() {
   const goToPage = useCallback((page) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
-    // Прокрутка к верху страницы
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [totalPages]);
 
@@ -228,7 +221,6 @@ export default function Plants() {
     }
   }, [currentPage, goToPage]);
 
-  // Получение массива номеров страниц для отображения
   const getPageNumbers = useMemo(() => {
     const pages = [];
     let startPage = Math.max(1, currentPage - Math.floor(PAGINATION_VISIBLE_PAGES / 2));
@@ -275,7 +267,6 @@ export default function Plants() {
     ].filter(Boolean).length;
   };
 
-  // Отображение диапазона товаров на текущей странице
   const getItemsRange = () => {
     const start = (currentPage - 1) * itemsPerPage + 1;
     const end = Math.min(currentPage * itemsPerPage, filteredProducts.length);
@@ -462,7 +453,6 @@ export default function Plants() {
                 ))}
               </div>
 
-              {/* Пагинация */}
               {totalPages > 1 && (
                 <div className="pagination-container">
                   <div className="pagination-info">

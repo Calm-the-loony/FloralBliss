@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from '../ProductCard/ProductCard';
+import { getApiUrl } from '../../config';
 import './BouquetShowcase.css';
 
 const BouquetShowcase = () => {
@@ -17,7 +18,7 @@ const BouquetShowcase = () => {
       setError(null);
       console.log('Загружаем товары из БД...');
       
-      const response = await fetch('http://localhost:5000/api/products/featured');
+      const response = await fetch(getApiUrl('/products/featured'));
       
       if (!response.ok) {
         throw new Error(`Ошибка сервера: ${response.status}`);

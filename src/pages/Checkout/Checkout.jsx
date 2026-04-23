@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
+import { getApiUrl } from '../../config';
 import './Checkout.css';
 
 export default function Checkout() {
@@ -107,7 +108,7 @@ export default function Checkout() {
     try {
       const token = localStorage.getItem('token') || localStorage.getItem('authToken');
       
-      const response = await fetch('http://localhost:5000/api/orders/create', {
+      const response = await fetch(getApiUrl('/orders/create'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

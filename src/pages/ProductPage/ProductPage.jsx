@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useFavorites } from '../../context/FavoritesContext';
+import { getApiUrl } from '../../config';
 import './ProductPage.css';
 
 const ProductPage = () => {
@@ -17,7 +18,6 @@ const ProductPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Получение всех изображений из JSON
   const getImageArray = (images) => {
     if (!images) return [];
     
@@ -52,15 +52,11 @@ const ProductPage = () => {
         setLoading(true);
         setError(null);
         
-        const response = await fetch(`http://localhost:5000/api/products/${id}`);
-        
-        console.log('Запрос товара с id:', id);
-        console.log('Ответ сервера статус:', response.status);
+        const response = await fetch(getApiUrl(`/products/${id}`));
         
         if (!response.ok) {
           if (response.status === 404) {
-            console.log('API не нашел товар, пробуем найти в общем списке...');
-            const allResponse = await fetch('http://localhost:5000/api/products/all');
+            const allResponse = await fetch(getApiUrl('/products/all'));
             
             if (allResponse.ok) {
               const allResult = await allResponse.json();
@@ -81,7 +77,6 @@ const ProductPage = () => {
         }
         
         const result = await response.json();
-        console.log('Получен товар:', result);
         
         if (result.success && result.data) {
           setProduct(result.data);

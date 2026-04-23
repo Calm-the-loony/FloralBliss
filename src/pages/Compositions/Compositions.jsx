@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import ProductCard from '../../components/ProductCard/ProductCard';
+import { getApiUrl } from '../../config';
 import './Compositions.css';
 
 const categories = [
@@ -70,7 +71,7 @@ export default function Compositions() {
         setLoading(true);
         setError(null);
         
-        const response = await fetch('http://localhost:5000/api/products/compositions');
+        const response = await fetch(getApiUrl('/products/compositions'));
         
         if (!response.ok) {
           throw new Error(`Ошибка сервера: ${response.status}`);
@@ -195,9 +196,9 @@ export default function Compositions() {
         <section className="compositions-hero">
           <div className="compositions-hero-content">
             <div className="hero-decoration">
-              <div className="flower-decoration">🎨</div>
+              <div className="flower-decoration">🌸</div>
               <h1>Каталог композиций</h1>
-              <div className="flower-decoration">🖼️</div>
+              <div className="flower-decoration">💐</div>
             </div>
             <p>Уникальные флористические работы для украшения интерьера и особых моментов</p>
           </div>
@@ -363,7 +364,7 @@ export default function Compositions() {
             </div>
           ) : filteredProducts.length === 0 ? (
             <div className="no-results">
-              <div className="no-results-icon">🎨</div>
+              <div className="no-results-icon">🌺</div>
               <h3>Композиции не найдены</h3>
               <p>Попробуйте изменить параметры поиска или сбросить фильтры</p>
               <button 
@@ -391,20 +392,20 @@ export default function Compositions() {
           )}
         </section>
 
-       <section className="custom-composition-section">
-  <div className="custom-composition-content">
-    <h2>Хотите уникальную композицию?</h2>
-    <p>Наши флористы создадут эксклюзивную работу специально для вас</p>
-    <div className="custom-composition-buttons">
-      <a href="/custom-composition" className="custom-composition-btn primary">
-        Заказать индивидуальный дизайн
-      </a>
-      <a href="/delivery" className="custom-composition-btn secondary">
-        Узнать о доставке
-      </a>
-    </div>
-  </div>
-</section>
+        <section className="custom-composition-section">
+          <div className="custom-composition-content">
+            <h2>Хотите уникальную композицию?</h2>
+            <p>Наши флористы создадут эксклюзивную работу специально для вас</p>
+            <div className="custom-composition-buttons">
+              <a href="/custom-composition" className="custom-composition-btn primary">
+                Заказать индивидуальный дизайн
+              </a>
+              <a href="/delivery" className="custom-composition-btn secondary">
+                Узнать о доставке
+              </a>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );

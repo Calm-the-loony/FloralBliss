@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useFavorites } from '../../context/FavoritesContext';
+import { getApiUrl } from '../../config';
 import './Profile.css';
 
 const Icons = {
@@ -131,7 +132,7 @@ export default function Profile() {
       
       const token = localStorage.getItem('token') || localStorage.getItem('authToken');
       
-      const response = await fetch('http://localhost:5000/api/orders/user', {
+      const response = await fetch(getApiUrl('/orders/user'), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -162,7 +163,7 @@ export default function Profile() {
     try {
       const token = localStorage.getItem('token') || localStorage.getItem('authToken');
       
-      const response = await fetch('http://localhost:5000/api/auth/update', {
+      const response = await fetch(getApiUrl('/auth/update'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -195,7 +196,7 @@ export default function Profile() {
     try {
       const token = localStorage.getItem('token') || localStorage.getItem('authToken');
       
-      const response = await fetch('http://localhost:5000/api/auth/change-password', {
+      const response = await fetch(getApiUrl('/auth/change-password'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

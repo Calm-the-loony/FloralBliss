@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { getApiUrl } from '../config';
 
 const AuthContext = createContext();
 
@@ -17,8 +18,6 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const API_URL = 'http://localhost:5000/api/auth';
-
   useEffect(() => {
     checkAuth();
   }, []);
@@ -29,7 +28,7 @@ export const AuthProvider = ({ children }) => {
       if (savedToken) {
         setToken(savedToken);
         
-        const response = await fetch(`${API_URL}/me`, {
+        const response = await fetch(getApiUrl('/auth/me'), {
           headers: {
             'Authorization': `Bearer ${savedToken}`
           }
@@ -39,10 +38,8 @@ export const AuthProvider = ({ children }) => {
           const data = await response.json();
           setUser(data.user);
           setIsLoggedIn(true);
-          // Проверка на администратора
           setIsAdmin(data.user.role === 'admin' || data.user.isAdmin === true);
         } else {
-          // Токен невалидный
           localStorage.removeItem('authToken');
           setToken(null);
         }
@@ -56,7 +53,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch(`${API_URL}/login`, {
+      const response = await fetch(getApiUrl('/auth/login'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,7 +81,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const response = await fetch(`${API_URL}/register`, {
+      const response = await fetch(getApiUrl('/auth/register'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

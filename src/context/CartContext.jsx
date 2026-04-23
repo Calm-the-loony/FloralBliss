@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getApiUrl } from '../config';
 
 const CartContext = createContext();
 
@@ -28,7 +29,7 @@ export const CartProvider = ({ children, userId }) => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`http://localhost:5000/api/cart/user/${userId}`);
+      const response = await fetch(getApiUrl(`/cart/user/${userId}`));
       
       if (!response.ok) {
         throw new Error(`Ошибка сервера: ${response.status}`);
@@ -111,7 +112,7 @@ export const CartProvider = ({ children, userId }) => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('http://localhost:5000/api/cart/add', {
+      const response = await fetch(getApiUrl('/cart/add'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, productId: product.id, quantity })
@@ -150,7 +151,7 @@ export const CartProvider = ({ children, userId }) => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('http://localhost:5000/api/cart/update', {
+      const response = await fetch(getApiUrl('/cart/update'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, productId, quantity })
@@ -184,7 +185,7 @@ export const CartProvider = ({ children, userId }) => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('http://localhost:5000/api/cart/remove', {
+      const response = await fetch(getApiUrl('/cart/remove'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, productId })
@@ -217,7 +218,7 @@ export const CartProvider = ({ children, userId }) => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('http://localhost:5000/api/cart/clear', {
+      const response = await fetch(getApiUrl('/cart/clear'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId })

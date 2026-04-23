@@ -25,12 +25,12 @@ const testConnection = async () => {
         `, [process.env.DB_NAME || 'floral_bliss']);
         
         if (tables.length > 0) {
-            console.log('✅ Таблица products существует');
+            console.log('Таблица products существует');
             
             const [count] = await connection.execute('SELECT COUNT(*) as count FROM products');
-            console.log(`✅ В таблице products: ${count[0].count} записей`);
+            console.log(` В таблице products: ${count[0].count} записей`);
         } else {
-            console.log('❌ Таблица products не существует');
+            console.log('Таблица products не существует');
         }
         
         connection.release();

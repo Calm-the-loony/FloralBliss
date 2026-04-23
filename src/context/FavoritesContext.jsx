@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getApiUrl } from '../config';
 
 const FavoritesContext = createContext();
 
@@ -24,7 +25,7 @@ export const FavoritesProvider = ({ children, userId }) => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch(`http://localhost:5000/api/favorites/user/${userId}`);
+      const response = await fetch(getApiUrl(`/favorites/user/${userId}`));
       
       if (!response.ok) {
         throw new Error(`Ошибка сервера: ${response.status}`);
@@ -60,7 +61,7 @@ export const FavoritesProvider = ({ children, userId }) => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('http://localhost:5000/api/favorites/add', {
+      const response = await fetch(getApiUrl('/favorites/add'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, productId: product.id })
@@ -98,7 +99,7 @@ export const FavoritesProvider = ({ children, userId }) => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('http://localhost:5000/api/favorites/remove', {
+      const response = await fetch(getApiUrl('/favorites/remove'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, productId })
@@ -145,7 +146,7 @@ export const FavoritesProvider = ({ children, userId }) => {
       setError(null);
       
       const deletePromises = favorites.map(item => 
-        fetch('http://localhost:5000/api/favorites/remove', {
+        fetch(getApiUrl('/favorites/remove'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId, productId: item.id })
