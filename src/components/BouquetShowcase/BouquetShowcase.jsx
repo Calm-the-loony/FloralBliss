@@ -15,7 +15,7 @@ const BouquetShowcase = () => {
     try {
       setLoading(true);
       setError(null);
-      console.log('🔄 Загружаем товары из БД...');
+      console.log('Загружаем товары из БД...');
       
       const response = await fetch('http://localhost:5000/api/products/featured');
       
@@ -28,13 +28,13 @@ const BouquetShowcase = () => {
       
       if (result.success && result.data && result.data.length > 0) {
         setProducts(result.data);
-        console.log('✅ Данные загружены из БД:', result.data.length, 'товаров');
+        console.log('Данные загружены из БД:', result.data.length, 'товаров');
       } else {
         throw new Error('Нет данных в базе данных');
       }
       
     } catch (err) {
-      console.error('❌ Ошибка загрузки товаров:', err);
+      console.error('Ошибка загрузки товаров:', err);
       setError('Не удалось загрузить товары из базы данных. Пожалуйста, проверьте подключение к серверу.');
     } finally {
       setLoading(false);

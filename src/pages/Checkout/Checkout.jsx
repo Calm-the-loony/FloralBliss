@@ -43,10 +43,8 @@ export default function Checkout() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Функция для форматирования элемента корзины в детальный вид
   const formatCartItem = (item) => {
     if (item.isCustom && item.customDetails) {
-      // Для кастомного букета - показываем подробный состав
       const composition = item.customDetails.composition || {};
       return {
         id: item.id,
@@ -66,7 +64,6 @@ export default function Checkout() {
         }
       };
     }
-    // Для обычного товара
     return {
       id: item.id,
       name: item.name,
@@ -90,7 +87,6 @@ export default function Checkout() {
 
     setLoading(true);
 
-    // Форматируем каждый элемент корзины
     const formattedItems = cartItems.map(item => formatCartItem(item));
 
     const orderData = {
@@ -109,10 +105,13 @@ export default function Checkout() {
     };
 
     try {
+      const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+      
       const response = await fetch('http://localhost:5000/api/orders/create', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
         },
         body: JSON.stringify(orderData)
       });

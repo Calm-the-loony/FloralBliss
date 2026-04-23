@@ -54,12 +54,12 @@ const ProductPage = () => {
         
         const response = await fetch(`http://localhost:5000/api/products/${id}`);
         
-        console.log('🔍 Запрос товара с id:', id);
-        console.log('📡 Ответ сервера статус:', response.status);
+        console.log('Запрос товара с id:', id);
+        console.log('Ответ сервера статус:', response.status);
         
         if (!response.ok) {
           if (response.status === 404) {
-            console.log('🔄 API не нашел товар, пробуем найти в общем списке...');
+            console.log('API не нашел товар, пробуем найти в общем списке...');
             const allResponse = await fetch('http://localhost:5000/api/products/all');
             
             if (allResponse.ok) {
@@ -81,7 +81,7 @@ const ProductPage = () => {
         }
         
         const result = await response.json();
-        console.log('📦 Получен товар:', result);
+        console.log('Получен товар:', result);
         
         if (result.success && result.data) {
           setProduct(result.data);
@@ -91,7 +91,7 @@ const ProductPage = () => {
           throw new Error(result.message || 'Товар не найден');
         }
       } catch (error) {
-        console.error('❌ Ошибка загрузки товара:', error);
+        console.error('Ошибка загрузки товара:', error);
         setError(error.message);
       } finally {
         setLoading(false);
@@ -121,7 +121,6 @@ const ProductPage = () => {
   const handleAddToCart = () => {
     if (!product) return;
     
-    // Добавляем товар с учетом выбранного количества
     for (let i = 0; i < quantity; i++) {
       addToCart({
         id: product.id,
@@ -134,16 +133,12 @@ const ProductPage = () => {
         quantity: 1
       });
     }
-    
-    // Анимация кнопки
+
     const button = document.querySelector('.add-to-cart-page');
     if (button) {
       button.classList.add('added');
       setTimeout(() => button.classList.remove('added'), 1000);
     }
-    
-    // Сброс количества после добавления (опционально)
-    // setQuantity(1);
   };
 
   const handleToggleFavorite = () => {
@@ -166,7 +161,6 @@ const ProductPage = () => {
   const isProductFavorite = product ? isFavorite(product.id) : false;
   const images = product ? getImageArray(product.images) : [];
 
-  // Функция для парсинга тегов
   const parseTags = (tags) => {
     if (!tags) return [];
     try {
@@ -214,7 +208,6 @@ const ProductPage = () => {
   return (
     <div className="product-page">
       <div className="container">
-        {/* Хлебные крошки */}
         <div className="breadcrumbs">
           <Link to="/">Главная</Link>
           <span className="separator">/</span>
@@ -224,7 +217,6 @@ const ProductPage = () => {
         </div>
 
         <div className="product-page-grid">
-          {/* Левая колонка - изображения */}
           <div className="product-gallery">
             <div className="main-image">
               {selectedImage ? (
@@ -267,7 +259,6 @@ const ProductPage = () => {
             )}
           </div>
 
-          {/* Правая колонка - информация */}
           <div className="product-info">
             <div className="product-header">
               <h1 className="product-title">{product.name}</h1>
@@ -374,20 +365,6 @@ const ProductPage = () => {
               </button>
             </div>
 
-            <div className="delivery-info">
-              <div className="delivery-item">
-                <div>
-                  <strong>Бесплатная доставка</strong>
-                  <p>При заказе от 3000 ₽ по городу</p>
-                </div>
-              </div>
-              <div className="delivery-item">
-                <div>
-                  <strong>Свежесть гарантируем</strong>
-                  <p>Цветы срезаны не более 24 часов назад</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

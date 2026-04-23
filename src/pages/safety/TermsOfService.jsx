@@ -135,9 +135,9 @@ export default function TermsOfService() {
                 По всем вопросам, связанным с настоящими Условиями, обращайтесь:
               </p>
               <div className="contact-info">
-                <p>📧 Email: legal@floralbliss.ru</p>
-                <p>📞 Телефон: +7 (495) 123-45-67</p>
-                <p>📍 Адрес: г. Москва, ул. Цветочная, д. 15</p>
+                <p>Email: legal@floralbliss.ru</p>
+                <p>Телефон: +7 (863) 123-45-67</p>
+                <p>Адрес: г. Ростов-на-Дону, ул. Пушкинская, 150</p>
               </div>
             </section>
           </div>

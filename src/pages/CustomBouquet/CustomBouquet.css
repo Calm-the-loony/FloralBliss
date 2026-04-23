@@ -58,7 +58,6 @@
   line-height: 1.6;
 }
 
-/* Прогресс бар */
 .progress-section {
   margin-bottom: 40px;
 }
@@ -120,7 +119,6 @@
   text-align: center;
 }
 
-/* Основной лейаут */
 .custom-bouquet-layout {
   display: grid;
   grid-template-columns: 1fr 400px;

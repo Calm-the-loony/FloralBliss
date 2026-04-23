@@ -7,8 +7,6 @@ import './Favorites.css';
 export default function Favorites() {
   const { favorites, removeFromFavorites, clearFavorites } = useFavorites();
   const { addToCart } = useCart();
-
-  // Функция для безопасного получения названия категории
   const getCategoryName = (category) => {
     if (!category) return 'Букет';
     if (typeof category === 'string') return category;
@@ -16,7 +14,6 @@ export default function Favorites() {
     return 'Букет';
   };
 
-  // Функция для безопасного получения изображения
   const getImage = (item) => {
     if (item.image) return item.image;
     if (item.images && Array.isArray(item.images)) return item.images[0];

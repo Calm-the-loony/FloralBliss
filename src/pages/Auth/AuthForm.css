@@ -113,7 +113,6 @@
   gap: 14px;
 }
 
-/* Стили для полей имени и фамилии */
 .name-row {
   display: flex;
   gap: 16px;
@@ -156,7 +155,6 @@
   font-weight: 400;
 }
 
-/* Стандартные поля */
 .form-group {
   display: flex;
   flex-direction: column;

@@ -61,7 +61,7 @@ class ImageLoaderService {
       img.crossOrigin = 'anonymous';
       
       img.onload = () => {
-        console.log('✅ Изображение загружено:', imagePath);
+        console.log('Изображение загружено:', imagePath);
         this.imageCache.set(cacheKey, img.src);
         this.currentLoads--;
         this.processQueue();
@@ -69,7 +69,7 @@ class ImageLoaderService {
       };
       
       img.onerror = (error) => {
-        console.warn('❌ Ошибка загрузки изображения:', imagePath, error);
+        console.warn('Ошибка загрузки изображения:', imagePath, error);
         this.currentLoads--;
         this.processQueue();
         

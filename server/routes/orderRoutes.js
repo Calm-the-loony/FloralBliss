@@ -1,17 +1,36 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../config/db');
+const jwt = require('jsonwebtoken');
 
-// Временная авторизация - используем пользователя с id=1
-const tempAuth = (req, res, next) => {
-    req.user = { id: 1 };
-    next();
+const authMiddleware = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader) {
+        return res.status(401).json({ success: false, message: 'Токен доступа отсутствует' });
+    }
+    
+    const token = authHeader.startsWith('Bearer ') ? authHeader.substring(7) : authHeader;
+    
+    if (!token) {
+        return res.status(401).json({ success: false, message: 'Токен доступа отсутствует' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+        req.user = decoded;
+        next();
+    } catch (error) {
+        console.error('Ошибка верификации токена:', error.message);
+        res.status(401).json({ success: false, message: 'Неверный токен' });
+    }
 };
 
 // Создание заказа
-router.post('/create', tempAuth, async (req, res) => {
+router.post('/create', authMiddleware, async (req, res) => {
     try {
         console.log('Создание заказа...');
+        console.log('Пользователь:', req.user);
         
         const {
             items,
@@ -34,8 +53,6 @@ router.post('/create', tempAuth, async (req, res) => {
         const subtotalNum = parseFloat(subtotal) || 0;
         const deliveryCostNum = parseFloat(delivery_cost) || 0;
         const totalNum = parseFloat(total) || 0;
-
-  
         const itemsJson = JSON.stringify(items);
 
         const [result] = await pool.query(
@@ -52,26 +69,26 @@ router.post('/create', tempAuth, async (req, res) => {
             ]
         );
 
-        console.log('✅ Заказ создан, номер:', orderNumber);
+        console.log('Заказ создан, номер:', orderNumber);
         res.json({ success: true, orderId: result.insertId, orderNumber });
     } catch (error) {
-        console.error('❌ Ошибка создания заказа:', error);
+        console.error('Ошибка создания заказа:', error);
         res.status(500).json({ success: false, message: error.message });
     }
 });
 
 // Получение заказов пользователя
-router.get('/user', async (req, res) => {
+router.get('/user', authMiddleware, async (req, res) => {
     try {
-        const userId = 1;
-        console.log('📋 Получение заказов для пользователя:', userId);
+        const userId = req.user.id;
+        console.log('Получение заказов для пользователя:', userId);
         
         const [orders] = await pool.query(
             `SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC`,
             [userId]
         );
 
-        console.log(`📊 Найдено заказов в БД: ${orders.length}`);
+        console.log(`Найдено заказов в БД: ${orders.length}`);
 
         const formattedOrders = [];
         
@@ -79,14 +96,10 @@ router.get('/user', async (req, res) => {
             try {
                 let parsedItems = [];
                 
-                // Проверяем, что items не пустой
                 if (order.items) {
-                    // Если items уже строка, парсим
                     if (typeof order.items === 'string') {
                         parsedItems = JSON.parse(order.items);
-                    } 
-                    // Если уже объект/массив
-                    else if (Array.isArray(order.items)) {
+                    } else if (Array.isArray(order.items)) {
                         parsedItems = order.items;
                     }
                 }
@@ -132,10 +145,10 @@ router.get('/user', async (req, res) => {
             }
         }
 
-        console.log(`✅ Отправляем ${formattedOrders.length} заказов`);
+        console.log(`Отправляем ${formattedOrders.length} заказов`);
         res.json({ success: true, orders: formattedOrders });
     } catch (error) {
-        console.error('❌ Ошибка получения заказов:', error);
+        console.error('Ошибка получения заказов:', error);
         res.status(500).json({ success: false, message: error.message });
     }
 });

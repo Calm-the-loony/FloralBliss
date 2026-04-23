@@ -83,7 +83,6 @@ export default function Bouquets() {
         const result = await response.json();
         
         if (result.success) {
-          // ИСПРАВЛЕНО: только букеты (тип 'bouquet'), без композиций
           const bouquetsOnly = result.data.filter(product => product.type === 'bouquet');
           
           setProducts(bouquetsOnly);

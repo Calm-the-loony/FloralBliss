@@ -266,7 +266,7 @@ export default function CustomBouquet() {
     };
 
     addToCart(customBouquet, 1);
-    alert('✅ Ваш индивидуальный букет добавлен в корзину!');
+    alert('Ваш индивидуальный букет добавлен в корзину!');
   };
 
   const nextStep = () => currentStep < 5 && setCurrentStep(currentStep + 1);

@@ -35,7 +35,6 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/admin/auth', adminAuthRoutes);
 app.use('/api/admin/panel', adminPanelRoutes);
 
-// Health check
 app.get('/api/health', (req, res) => {
     res.json({ 
         success: true, 
@@ -66,28 +65,27 @@ const createAdminIfNotExists = async () => {
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
                 )
             `);
-            console.log('✅ Таблица admins создана');
+            console.log('Таблица admins создана');
         }
         
         // Проверяем, существует ли администратор
         const [admins] = await pool.query('SELECT * FROM admins WHERE email = ?', ['admin@floralbliss.com']);
         
         if (admins.length === 0) {
-            // Создаем администратора с паролем admin123
             const hash = await bcrypt.hash('admin123', 10);
             await pool.query(
                 'INSERT INTO admins (username, email, password_hash, role, is_active) VALUES (?, ?, ?, ?, ?)',
                 ['admin', 'admin@floralbliss.com', hash, 'super_admin', 1]
             );
-            console.log('✅ Администратор создан!');
-            console.log('📧 Email: admin@floralbliss.com');
-            console.log('🔑 Пароль: admin123');
+            console.log('Администратор создан!');
+            console.log('Email: admin@floralbliss.com');
+            console.log('Пароль: admin123');
         } else {
-            console.log('👤 Администратор уже существует');
+            console.log('Администратор уже существует');
         }
         
     } catch (error) {
-        console.error('❌ Ошибка создания администратора:', error);
+        console.error('Ошибка создания администратора:', error);
     }
 };
 
@@ -113,7 +111,7 @@ app.use('*', (req, res) => {
 
 // Обработка ошибок
 app.use((error, req, res, next) => {
-    console.error('❌ Ошибка сервера:', error);
+    console.error('Ошибка сервера:', error);
     res.status(500).json({
         success: false,
         message: 'Внутренняя ошибка сервера: ' + error.message

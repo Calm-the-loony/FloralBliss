@@ -4,6 +4,8 @@ import { useCart } from '../../context/CartContext';
 import { useFavorites } from '../../context/FavoritesContext';
 import './ProductCard.css';
 
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=600&fit=crop&auto=format';
+
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
   const { toggleFavorite, isFavorite } = useFavorites();
@@ -65,7 +67,7 @@ const ProductCard = ({ product }) => {
         const firstImage = getFirstImage();
         
         if (!firstImage) {
-          setImageUrl(`https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=600&fit=crop&auto=format`);
+          setImageUrl(FALLBACK_IMAGE);
           setImageLoaded(true);
           setLoading(false);
           return;
@@ -88,7 +90,7 @@ const ProductCard = ({ product }) => {
           };
           
           testImage.onerror = () => {
-            setImageUrl(`https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=600&fit=crop&auto=format`);
+            setImageUrl(FALLBACK_IMAGE);
             setImageError(true);
             setLoading(false);
           };
@@ -104,13 +106,13 @@ const ProductCard = ({ product }) => {
           return;
         }
         
-        setImageUrl(`https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=600&fit=crop&auto=format`);
+        setImageUrl(FALLBACK_IMAGE);
         setImageLoaded(true);
         setLoading(false);
         
       } catch (error) {
         console.error('Ошибка загрузки изображения:', error);
-        setImageUrl(`https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=600&fit=crop&auto=format`);
+        setImageUrl(FALLBACK_IMAGE);
         setImageError(true);
         setLoading(false);
       }
@@ -121,7 +123,7 @@ const ProductCard = ({ product }) => {
 
   const handleImageError = (e) => {
     setImageError(true);
-    e.target.src = `https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=600&fit=crop&auto=format`;
+    e.target.src = FALLBACK_IMAGE;
   };
 
   const handleImageLoad = () => {
@@ -129,7 +131,7 @@ const ProductCard = ({ product }) => {
     setImageError(false);
   };
 
-  const isOnSale = original_price && original_price > price;
+  const isOnSale = original_price && Number(original_price) > Number(price);
 
   const normalizePrice = (priceValue) => {
     if (typeof priceValue === 'number') return priceValue;
@@ -151,7 +153,7 @@ const ProductCard = ({ product }) => {
       price: normalizePrice(price),
       image: imageUrl,
       description,
-      category: category?.name || category,
+      category: category?.name || (typeof category === 'string' ? category : 'Товар'),
       type
     });
 

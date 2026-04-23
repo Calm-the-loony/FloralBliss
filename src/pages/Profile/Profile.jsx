@@ -17,10 +17,8 @@ const Icons = {
   lock: '🔐'
 };
 
-// Компонент для изображений с обработкой ошибок
 const SimpleImage = ({ src, alt, className }) => {
   const [hasError, setHasError] = useState(false);
-  
   const isValidSrc = src && src !== 'null' && src !== 'undefined' && src.trim() !== '';
 
   if (!isValidSrc || hasError) {
@@ -66,7 +64,6 @@ export default function Profile() {
   
   const canvasRef = useRef(null);
 
-  // Загружаем данные пользователя
   useEffect(() => {
     const loadUserData = async () => {
       if (!isLoggedIn || !user) {
@@ -79,9 +76,7 @@ export default function Profile() {
         setUserData(user);
         setEditForm(user);
         setError(null);
-        
         await fetchOrders();
-        
       } catch (error) {
         console.error('Ошибка загрузки данных пользователя:', error);
         setError('Ошибка загрузки данных');
@@ -93,7 +88,6 @@ export default function Profile() {
     loadUserData();
   }, [user, isLoggedIn, navigate]);
 
-  // Минималистичный фон
   useEffect(() => {
     if (canvasRef.current && userData) {
       const canvas = canvasRef.current;
@@ -131,23 +125,22 @@ export default function Profile() {
     }
   }, [userData]);
 
-  // Загрузка заказов - ИСПРАВЛЕННАЯ ВЕРСИЯ
   const fetchOrders = async () => {
     try {
       setLoading(prev => ({ ...prev, orders: true }));
       
+      const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+      
       const response = await fetch('http://localhost:5000/api/orders/user', {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : ''
         }
       });
 
-      console.log('📡 Ответ от сервера заказов:', response.status);
-
       if (response.ok) {
         const data = await response.json();
-        console.log('📦 Получены заказы:', data);
         
         if (data.success && data.orders) {
           setOrders(data.orders);
@@ -155,7 +148,6 @@ export default function Profile() {
           setOrders([]);
         }
       } else {
-        console.error('Ошибка загрузки заказов:', response.status);
         setOrders([]);
       }
     } catch (error) {
@@ -166,7 +158,6 @@ export default function Profile() {
     }
   };
 
-  // Обновление профиля
   const handleSave = async () => {
     try {
       const token = localStorage.getItem('token') || localStorage.getItem('authToken');
@@ -195,7 +186,6 @@ export default function Profile() {
     }
   };
 
-  // Смена пароля
   const handlePasswordChange = async () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
       alert('Пароли не совпадают');
@@ -268,9 +258,7 @@ export default function Profile() {
         <div className="profile-container">
           <div className="error-state">
             <p>{error}</p>
-            <button onClick={() => window.location.reload()}>
-              Обновить
-            </button>
+            <button onClick={() => window.location.reload()}>Обновить</button>
           </div>
         </div>
       </div>
@@ -299,31 +287,16 @@ export default function Profile() {
           </div>
           
           <nav className="sidebar-nav">
-            <button 
-              className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`}
-              onClick={() => setActiveTab('profile')}
-            >
+            <button className={`nav-item ${activeTab === 'profile' ? 'active' : ''}`} onClick={() => setActiveTab('profile')}>
               <span>Личные данные</span>
             </button>
-            
-            <button 
-              className={`nav-item ${activeTab === 'orders' ? 'active' : ''}`}
-              onClick={() => setActiveTab('orders')}
-            >
+            <button className={`nav-item ${activeTab === 'orders' ? 'active' : ''}`} onClick={() => setActiveTab('orders')}>
               <span>Мои заказы</span>
-              {orders.length > 0 && (
-                <span className="nav-count">{orders.length}</span>
-              )}
+              {orders.length > 0 && <span className="nav-count">{orders.length}</span>}
             </button>
-            
-            <button 
-              className={`nav-item ${activeTab === 'favorites' ? 'active' : ''}`}
-              onClick={() => setActiveTab('favorites')}
-            >
+            <button className={`nav-item ${activeTab === 'favorites' ? 'active' : ''}`} onClick={() => setActiveTab('favorites')}>
               <span>Избранное</span>
-              {favorites.length > 0 && (
-                <span className="nav-count">{favorites.length}</span>
-              )}
+              {favorites.length > 0 && <span className="nav-count">{favorites.length}</span>}
             </button>
           </nav>
           
@@ -340,10 +313,7 @@ export default function Profile() {
             <div className="profile-content">
               <div className="content-header">
                 <h1>Личные данные</h1>
-                <button 
-                  className="edit-toggle"
-                  onClick={() => setIsEditing(!isEditing)}
-                >
+                <button className="edit-toggle" onClick={() => setIsEditing(!isEditing)}>
                   {isEditing ? 'Отмена' : 'Редактировать'}
                 </button>
               </div>
@@ -354,68 +324,30 @@ export default function Profile() {
                     <div className="edit-form">
                       <div className="form-group">
                         <label>Имя</label>
-                        <input 
-                          type="text" 
-                          name="first_name"
-                          value={editForm.first_name || editForm.firstName || ''}
-                          onChange={(e) => setEditForm({...editForm, first_name: e.target.value})}
-                          className="form-input"
-                        />
+                        <input type="text" name="first_name" value={editForm.first_name || editForm.firstName || ''} onChange={(e) => setEditForm({...editForm, first_name: e.target.value})} className="form-input" />
                       </div>
                       <div className="form-group">
                         <label>Фамилия</label>
-                        <input 
-                          type="text" 
-                          name="last_name"
-                          value={editForm.last_name || editForm.lastName || ''}
-                          onChange={(e) => setEditForm({...editForm, last_name: e.target.value})}
-                          className="form-input"
-                        />
+                        <input type="text" name="last_name" value={editForm.last_name || editForm.lastName || ''} onChange={(e) => setEditForm({...editForm, last_name: e.target.value})} className="form-input" />
                       </div>
                       <div className="form-group">
                         <label>Email</label>
-                        <input 
-                          type="email" 
-                          name="email"
-                          value={editForm.email || ''}
-                          onChange={(e) => setEditForm({...editForm, email: e.target.value})}
-                          className="form-input"
-                        />
+                        <input type="email" name="email" value={editForm.email || ''} onChange={(e) => setEditForm({...editForm, email: e.target.value})} className="form-input" />
                       </div>
                       <div className="form-group">
                         <label>Телефон</label>
-                        <input 
-                          type="tel" 
-                          name="phone"
-                          value={editForm.phone || ''}
-                          onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
-                          className="form-input"
-                        />
+                        <input type="tel" name="phone" value={editForm.phone || ''} onChange={(e) => setEditForm({...editForm, phone: e.target.value})} className="form-input" />
                       </div>
                       <div className="form-actions">
-                        <button className="save-btn" onClick={handleSave}>
-                          Сохранить изменения
-                        </button>
+                        <button className="save-btn" onClick={handleSave}>Сохранить изменения</button>
                       </div>
                     </div>
                   ) : (
                     <div className="info-list">
-                      <div className="info-item">
-                        <label>Имя</label>
-                        <div className="info-value">{userData.first_name || userData.firstName || 'Не указано'}</div>
-                      </div>
-                      <div className="info-item">
-                        <label>Фамилия</label>
-                        <div className="info-value">{userData.last_name || userData.lastName || 'Не указано'}</div>
-                      </div>
-                      <div className="info-item">
-                        <label>Email</label>
-                        <div className="info-value">{userData.email}</div>
-                      </div>
-                      <div className="info-item">
-                        <label>Телефон</label>
-                        <div className="info-value">{userData.phone || 'Не указан'}</div>
-                      </div>
+                      <div className="info-item"><label>Имя</label><div className="info-value">{userData.first_name || userData.firstName || 'Не указано'}</div></div>
+                      <div className="info-item"><label>Фамилия</label><div className="info-value">{userData.last_name || userData.lastName || 'Не указано'}</div></div>
+                      <div className="info-item"><label>Email</label><div className="info-value">{userData.email}</div></div>
+                      <div className="info-item"><label>Телефон</label><div className="info-value">{userData.phone || 'Не указан'}</div></div>
                     </div>
                   )}
                 </div>
@@ -426,81 +358,37 @@ export default function Profile() {
                     <div className="password-form">
                       <div className="form-group">
                         <label>Текущий пароль</label>
-                        <input
-                          type="password"
-                          name="currentPassword"
-                          value={passwordForm.currentPassword}
-                          onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
-                          className="form-input"
-                        />
+                        <input type="password" name="currentPassword" value={passwordForm.currentPassword} onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})} className="form-input" />
                       </div>
                       <div className="form-group">
                         <label>Новый пароль</label>
-                        <input
-                          type="password"
-                          name="newPassword"
-                          value={passwordForm.newPassword}
-                          onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
-                          className="form-input"
-                        />
+                        <input type="password" name="newPassword" value={passwordForm.newPassword} onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})} className="form-input" />
                       </div>
                       <div className="form-group">
                         <label>Подтвердите пароль</label>
-                        <input
-                          type="password"
-                          name="confirmPassword"
-                          value={passwordForm.confirmPassword}
-                          onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
-                          className="form-input"
-                        />
+                        <input type="password" name="confirmPassword" value={passwordForm.confirmPassword} onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})} className="form-input" />
                       </div>
                       <div className="form-actions">
-                        <button className="save-btn" onClick={handlePasswordChange}>
-                          Сменить пароль
-                        </button>
-                        <button 
-                          className="cancel-btn" 
-                          onClick={() => setShowPasswordForm(false)}
-                        >
-                          Отмена
-                        </button>
+                        <button className="save-btn" onClick={handlePasswordChange}>Сменить пароль</button>
+                        <button className="cancel-btn" onClick={() => setShowPasswordForm(false)}>Отмена</button>
                       </div>
                     </div>
                   ) : (
-                    <button 
-                      className="change-password-btn"
-                      onClick={() => setShowPasswordForm(true)}
-                    >
-                      Сменить пароль
-                    </button>
+                    <button className="change-password-btn" onClick={() => setShowPasswordForm(true)}>Сменить пароль</button>
                   )}
                 </div>
               </div>
             </div>
           )}
           
-          {activeTab === 'orders' && (
-            <OrdersTab 
-              orders={orders} 
-              loading={loading.orders}
-            />
-          )}
-          
-          {activeTab === 'favorites' && (
-            <FavoritesTab 
-              favorites={favorites} 
-              removeFromFavorites={removeFromFavorites}
-              getImageUrl={getImageUrl}
-              Icons={Icons}
-            />
-          )}
+          {activeTab === 'orders' && <OrdersTab orders={orders} loading={loading.orders} />}
+          {activeTab === 'favorites' && <FavoritesTab favorites={favorites} removeFromFavorites={removeFromFavorites} getImageUrl={getImageUrl} Icons={Icons} />}
         </div>
       </div>
     </div>
   );
 }
 
-// Компонент заказов
 const OrdersTab = ({ orders, loading }) => {
   const formatDate = (dateString) => {
     try {
@@ -544,9 +432,7 @@ const OrdersTab = ({ orders, loading }) => {
         <h1>Мои заказы</h1>
         <div className="empty-state">
           <p>У вас пока нет заказов</p>
-          <Link to="/bouquets" className="primary-btn">
-            Перейти к покупкам
-          </Link>
+          <Link to="/bouquets" className="primary-btn">Перейти к покупкам</Link>
         </div>
       </div>
     );
@@ -573,14 +459,14 @@ const OrdersTab = ({ orders, loading }) => {
                 <div key={idx} className="order-item">
                   <span className="item-name">{item.name}</span>
                   <span className="item-quantity">×{item.quantity}</span>
-                  <span className="item-price">{item.price.toLocaleString()} ₽</span>
+                  <span className="item-price">{item.price?.toLocaleString()} ₽</span>
                 </div>
               ))}
             </div>
             
             <div className="order-footer">
               <div className="order-total">
-                Итого: <span>{order.total.toLocaleString()} ₽</span>
+                Итого: <span>{order.total?.toLocaleString()} ₽</span>
               </div>
             </div>
           </div>
@@ -590,7 +476,6 @@ const OrdersTab = ({ orders, loading }) => {
   );
 };
 
-// Компонент избранного
 const FavoritesTab = ({ favorites, removeFromFavorites, getImageUrl, Icons }) => {
   if (!favorites || favorites.length === 0) {
     return (
@@ -598,9 +483,7 @@ const FavoritesTab = ({ favorites, removeFromFavorites, getImageUrl, Icons }) =>
         <h1>Избранное</h1>
         <div className="empty-state">
           <p>В избранном пока пусто</p>
-          <Link to="/bouquets" className="primary-btn">
-            Смотреть букеты
-          </Link>
+          <Link to="/bouquets" className="primary-btn">Смотреть букеты</Link>
         </div>
       </div>
     );
@@ -612,38 +495,24 @@ const FavoritesTab = ({ favorites, removeFromFavorites, getImageUrl, Icons }) =>
       <div className="favorites-grid">
         {favorites.map(item => {
           const imageUrl = getImageUrl(item);
-          
           return (
             <div key={item.id} className="favorite-item">
               <div className="favorite-image">
                 {imageUrl ? (
-                  <img 
-                    src={imageUrl} 
-                    alt={item.name || 'Букет'}
-                    className="favorite-img"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.parentElement.innerHTML = '<div class="image-placeholder"><span>🌸</span></div>';
-                    }}
-                  />
+                  <img src={imageUrl} alt={item.name || 'Букет'} className="favorite-img" onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.parentElement.innerHTML = '<div class="image-placeholder"><span>🌸</span></div>';
+                  }} />
                 ) : (
-                  <div className="image-placeholder">
-                    <span>🌸</span>
-                  </div>
+                  <div className="image-placeholder"><span>🌸</span></div>
                 )}
               </div>
               <div className="favorite-info">
                 <h3>{item.name || 'Букет'}</h3>
                 <p className="favorite-price">{item.price ? `${Number(item.price).toLocaleString()} ₽` : ''}</p>
                 <div className="favorite-actions">
-                  <Link to={`/product/${item.id}`} className="view-btn">
-                    Подробнее
-                  </Link>
-                  <button 
-                    className="remove-btn"
-                    onClick={() => removeFromFavorites(item.id)}
-                    title="Удалить из избранного"
-                  >
+                  <Link to={`/product/${item.id}`} className="view-btn">Подробнее</Link>
+                  <button className="remove-btn" onClick={() => removeFromFavorites(item.id)} title="Удалить из избранного">
                     {Icons.delete}
                   </button>
                 </div>

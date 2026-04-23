@@ -42,11 +42,9 @@ export default function Plants() {
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
   
-  // Состояния для пагинации
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(ITEMS_PER_PAGE);
 
-  // Сброс на первую страницу при изменении фильтров
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedPrice, selectedCare, searchQuery, sortBy]);
@@ -74,7 +72,6 @@ export default function Plants() {
     }
   }, [searchTimeout]);
 
-  // Загрузка растений из БД
   useEffect(() => {
     const fetchPlants = async () => {
       try {
@@ -144,7 +141,6 @@ export default function Plants() {
 
     let filtered = [...products];
 
-    // Фильтрация по цене
     if (selectedPrice !== 'all') {
       const priceRange = priceRanges.find(range => range.id === selectedPrice);
       filtered = filtered.filter(plant => {
@@ -154,7 +150,6 @@ export default function Plants() {
       });
     }
 
-    // Фильтрация по сложности ухода
     if (selectedCare !== 'all') {
       filtered = filtered.filter(plant => {
         const careLevel = getCareLevel(plant.care_instructions);
@@ -203,19 +198,17 @@ export default function Plants() {
     setFilteredProducts(filtered);
   }, [products, selectedPrice, selectedCare, searchQuery, sortBy]);
 
-  // Пагинация - получаем текущие товары
+  // Пагинация 
   const currentProducts = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     return filteredProducts.slice(startIndex, endIndex);
   }, [filteredProducts, currentPage, itemsPerPage]);
 
-  // Пагинация - общее количество страниц
   const totalPages = useMemo(() => {
     return Math.ceil(filteredProducts.length / itemsPerPage);
   }, [filteredProducts, itemsPerPage]);
 
-  // Функция для переключения страницы
   const goToPage = useCallback((page) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
@@ -223,14 +216,12 @@ export default function Plants() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [totalPages]);
 
-  // Функция для перехода на следующую страницу
   const goToNextPage = useCallback(() => {
     if (currentPage < totalPages) {
       goToPage(currentPage + 1);
     }
   }, [currentPage, totalPages, goToPage]);
 
-  // Функция для перехода на предыдущую страницу
   const goToPrevPage = useCallback(() => {
     if (currentPage > 1) {
       goToPage(currentPage - 1);
