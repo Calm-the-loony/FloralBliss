@@ -89,7 +89,7 @@ const createAdminIfNotExists = async () => {
 };
 
 // Запуск сервера
-app.listen(PORT, async () => {
+app.listen(PORT, '0.0.0.0', async () => {
     console.log(`Сервер запущен на порту http://localhost:${PORT}`);
     console.log(`Health check: http://localhost:${PORT}/api/health`);
     console.log(`Admin API готов к работе`);
