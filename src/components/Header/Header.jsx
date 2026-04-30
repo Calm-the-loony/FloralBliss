@@ -53,7 +53,7 @@ export default function Header() {
               <circle cx="16" cy="16" r="4" fill="#F5ECD7" stroke="#8BC9A1" strokeWidth="2"/>
             </svg>
           </div>
-          <span className="logo__text">Floral Bliss</span>
+          <span className="logo__text">Бутон</span>
         </div>
 
         <nav className={`header__nav ${menuOpen ? 'open' : ''}`}>

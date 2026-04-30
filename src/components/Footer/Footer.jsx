@@ -15,7 +15,7 @@ export default function Footer() {
                 <circle cx="16" cy="16" r="4" fill="#F5ECD7" stroke="#8BC9A1" strokeWidth="2"/>
               </svg>
             </div>
-            <span className="logo__text">Floral Bliss</span>
+            <span className="logo__text">Бутон</span>
           </div>
           <p>Создаём красоту и гармонию в каждом букете. Нежные цветы для ваших особенных моментов.</p>
         </div>
@@ -23,20 +23,20 @@ export default function Footer() {
         <div className="footer__section">
           <h4>Навигация</h4>
           <ul>
-            <li><a href="#bouquets">Букеты</a></li>
-            <li><a href="#plants">Растения</a></li>
-            <li><a href="#compositions">Композиции</a></li>
-            <li><a href="#about">О нас</a></li>
-            <li><a href="#delivery">Доставка</a></li>
+            <li><a href="/bouquets">Букеты</a></li>
+            <li><a href="/plants">Растения</a></li>
+            <li><a href="/compositions">Композиции</a></li>
+            <li><a href="/about">О нас</a></li>
+            <li><a href="/delivery">Доставка</a></li>
           </ul>
         </div>
 
         <div className="footer__section">
           <h4>Контакты</h4>
           <ul>
-            <li>Ростов-на-Дону, ул. Пушкинская, 150</li>
-            <li>+7 (999) 123-45-67</li>
-            <li>floralbliss@example.com</li>
+            <li>Ростов-на-Дону, проспект Стачки, 190/16</li>
+            <li>+79897150505</li>
+            <li>buton@example.com</li>
             <li>Ежедневно 9:00 - 21:00</li>
           </ul>
         </div>
@@ -54,7 +54,7 @@ export default function Footer() {
       </div>
 
       <div className="footer__bottom">
-        <p>© {new Date().getFullYear()} Floral Bliss. Все права защищены.</p>
+        <p>© {new Date().getFullYear()} Бутон. Все права защищены.</p>
       </div>
     </footer>
   );

@@ -68,7 +68,7 @@ export default function Delivery() {
   const deliveryZones = [
     { zone: 'Центр города', time: '1–2 часа', price: 'Бесплатно', minOrder: '1 500 ₽' },
     { zone: 'Северный', time: '2–3 часа', price: '200 ₽', minOrder: '1 500 ₽' },
-    { zone: 'Западный', time: '2–3 часа', price: '200 ₽', minOrder: '1 500 ₽' },
+    { zone: 'Западный', time: '1–2 часа', price: 'Бесплатно', minOrder: '1 500 ₽' },
     { zone: 'Александровка', time: '2–3 часа', price: '250 ₽', minOrder: '1 800 ₽' },
     { zone: 'Нахичевань', time: '2–3 часа', price: '200 ₽', minOrder: '1 500 ₽' },
     { zone: 'ЗЖМ', time: '2–3 часа', price: '200 ₽', minOrder: '1 500 ₽' }
@@ -91,7 +91,7 @@ export default function Delivery() {
     },
     {
       question: 'Можно ли изменить адрес после оформления?',
-      answer: 'Да, если заказ ещё не передан курьеру. Позвоните нам: +7 (863) 123-45-67.'
+      answer: 'Да, если заказ ещё не передан курьеру. Позвоните нам:  +79897150505.'
     },
     {
       question: 'Как сохраняется свежесть цветов?',
@@ -215,7 +215,7 @@ export default function Delivery() {
             ))}
           </div>
           <p className="zone-note">
-            * Бесплатная доставка действует при заказе от 1 500 ₽ в пределах центра города.<br />
+            * Бесплатная доставка действует при заказе от 1 500 ₽ в пределах западного и центра города.<br />
             При заказе в другие районы стоимость доставки фиксированная.
           </p>
         </div>
@@ -269,19 +269,19 @@ export default function Delivery() {
               <div className="contacts">
                 <div className="contact-item">
                   <span className="contact-label">Телефон</span>
-                  <a href="tel:+78631234567" className="contact-value">+7 (863) 123-45-67</a>
+                  <a href="tel:+ +79897150505" className="contact-value"> +79897150505</a>
                 </div>
                 <div className="contact-item">
                   <span className="contact-label">Telegram</span>
-                  <a href="https://t.me/floralbliss_rostov" className="contact-value">@floralbliss_rostov</a>
+                  <a href="https://t.me/buton_rostov" className="contact-value">@buton_rostov</a>
                 </div>
                 <div className="contact-item">
                   <span className="contact-label">Email</span>
-                  <a href="mailto:delivery@floralbliss.ru" className="contact-value">delivery@floralbliss.ru</a>
+                  <a href="mailto:buton@example.com" className="contact-value">buton@example.com</a>
                 </div>
                 <div className="contact-item">
                   <span className="contact-label">Адрес</span>
-                  <span className="contact-value">ул. Пушкинская, 150</span>
+                  <span className="contact-value">Ростов-на-Дону, проспект Стачки, 190/16</span>
                 </div>
               </div>
               <p className="note">Пишите в Telegram — ответим мгновенно</p>

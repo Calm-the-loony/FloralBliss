@@ -143,7 +143,7 @@ export default function Cart() {
                     />
                     <div className="option-content">
                       <span className="option-title">Самовывоз</span>
-                      <span className="option-description">г. Ростов-на-Дону, ул. Пушкинская, 150</span>
+                      <span className="option-description">г. Ростов-на-Дону, проспект Стачки, 190/16 (Западный район)</span>
                     </div>
                   </label>
                 </div>

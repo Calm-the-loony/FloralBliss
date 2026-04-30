@@ -29,11 +29,11 @@
 }
 
 .footer__logo .logo__text {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Playfair Display', 'Georgia', serif;
   font-size: 1.4rem;
   font-weight: 700;
   color: #8BC9A1;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
 }
 
 .footer__brand p {
